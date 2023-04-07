@@ -1,0 +1,36 @@
+{
+  "name": "projectyoutube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "crud": "nodemon ./src/crudMySql.js",
+    "fetch": "nodemon ./src/newFetch/fetchAddCicle.js",
+    "history": "nodemon ./src/addHistoryYoutube/addHistoryYoutube.js",
+    "subtitle": "nodemon ./src/subtitle/allFunction.js",
+    "word": "nodemon ./src/subtitle/wordAndIndexInFolders/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "googleapis": "^111.0.0",
+    "langdetect": "^0.2.1",
+    "lemmatizer": "^0.0.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.1.2",
+    "natural": "^6.2.0",
+    "nlp_compromise": "^7.0.0",
+    "node-nlp": "^4.26.1",
+    "nodemon": "^2.0.20",
+    "path": "^0.12.7",
+    "python-shell": "^5.0.0",
+    "subtitle-converter": "^3.0.12",
+    "youtube-dl-exec": "^2.3.1"
+  }
+}
