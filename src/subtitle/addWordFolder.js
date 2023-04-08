@@ -4,26 +4,26 @@ const addDB = require("./addInDB/addWordDB");
 
 lastId = null;
 
-// setInterval(() => {
-//   const mysqlQuery =
-//     "SELECT user_history_youtube_id FROM user_history_youtube WHERE statusWord = 'false' AND statusSub='subtitleSaved'  ORDER BY viewes DESC";
+setInterval(() => {
+  const mysqlQuery =
+    "SELECT user_history_youtube_id FROM user_history_youtube WHERE statusWord = 'false' AND statusSub='subtitleSaved'  ORDER BY viewes DESC";
 
-//   db.query(mysqlQuery, function (err, results) {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-//     if (results.length > 0) {
-//       const rowID = Object.values(results[0]);
-//       console.log(rowID);
-//       if (rowID !== lastId) {
-//         console.log(rowID);
-//         frequency(rowID);
-//         lastId = rowID;
-//       }
-//     }
-//   });
-// }, 3000);
+  db.query(mysqlQuery, function (err, results) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    if (results.length > 0) {
+      const rowID = Object.values(results[0]);
+      console.log(rowID);
+      if (rowID !== lastId) {
+        console.log(rowID);
+        frequency(rowID);
+        lastId = rowID;
+      }
+    }
+  });
+}, 3000);
 
 async function frequency(objWords) {
   try {
@@ -141,4 +141,4 @@ async function frequency(objWords) {
     console.error("Error in addDB:", error);
   }
 }
-frequency("___lVbYXor8");
+// frequency("___lVbYXor8");

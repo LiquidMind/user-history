@@ -122,4 +122,4 @@ src/subtitle/wordAndIndexInFolders/*
 # ignore all files and directories within myfolder
 src/subtitle/wordWoleAndIndexInFolders/*
 !src/subtitle/wordWoleAndIndexInFolders/
-node_modules
+
