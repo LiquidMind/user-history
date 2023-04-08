@@ -106,6 +106,8 @@ dist
 # TernJS port file
 .tern-port
 
+.DS_Store
+
 # # ignore all files and directories within myfolder
 # src/subtitle/json_subtitle/*
 # !src/subtitle/json_subtitle/
