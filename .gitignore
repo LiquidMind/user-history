@@ -107,25 +107,25 @@ dist
 .tern-port
 
 # ignore all files and directories within myfolder
-json_subtitle/*
+subtitle/json_subtitle/*
 
 # but keep the myfolder directory itself
-!json_subtitle/
+!subtitle/json_subtitle/
 
 # ignore all files and directories within myfolder
-subtitleVTT/*
+subtitle/subtitleVTT/*
 
 # but keep the myfolder directory itself
-!subtitleVTT/
+!subtitle/subtitleVTT/
 
 # ignore all files and directories within myfolder
-wordAndIndexInFolders/*
+subtitle/wordAndIndexInFolders/*
 
 # but keep the myfolder directory itself
-!wordAndIndexInFolders/
+!subtitle/wordAndIndexInFolders/
 
 # ignore all files and directories within myfolder
-wordWoleAndIndexInFolders/*
+subtitle/wordWoleAndIndexInFolders/*
 
 # but keep the myfolder directory itself
-!wordWoleAndIndexInFolders/
+!subtitle/wordWoleAndIndexInFolders/
