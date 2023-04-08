@@ -68,9 +68,6 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-
-.DS_Store
-
 # Yarn Integrity file
 .yarn-integrity
 
@@ -110,19 +107,25 @@ dist
 .tern-port
 
 # ignore all files and directories within myfolder
-src/subtitle/json_subtitle/*
-!src/subtitle/json_subtitle/
+json_subtitle/*
+
+# but keep the myfolder directory itself
+!json_subtitle/
 
 # ignore all files and directories within myfolder
-src/subtitle/subtitleVTT/*
-!src/subtitle/subtitleVTT/
+subtitleVTT/*
 
-
-# ignore all files and directories within myfolder
-src/subtitle/wordAndIndexInFolders/*
-!src/subtitle/wordAndIndexInFolders/
+# but keep the myfolder directory itself
+!subtitleVTT/
 
 # ignore all files and directories within myfolder
-src/subtitle/wordWoleAndIndexInFolders/*
-!src/subtitle/wordWoleAndIndexInFolders/
+wordAndIndexInFolders/*
 
+# but keep the myfolder directory itself
+!wordAndIndexInFolders/
+
+# ignore all files and directories within myfolder
+wordWoleAndIndexInFolders/*
+
+# but keep the myfolder directory itself
+!wordWoleAndIndexInFolders/
