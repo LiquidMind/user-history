@@ -8,7 +8,7 @@
     "fetch": "nodemon ./src/newFetch/fetchAddCicle.js",
     "history": "nodemon ./src/addHistoryYoutube/addHistoryYoutube.js",
     "subtitle": "nodemon ./src/subtitle/allFunction.js",
-    "word": "nodemon ./src/subtitle/wordAndIndexInFolders/index.js",
+    "word": "nodemon ./src/subtitle/addWordFolder.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
