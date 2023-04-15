@@ -73,7 +73,7 @@ function resultArr(arrHistory) {
         console.error("Помилка створення таблиці:", error);
         return;
       }
-      console.log("Таблицю створено успішно!");
+      console.log("Таблицю оновленно успішно!");
     }
   );
 
