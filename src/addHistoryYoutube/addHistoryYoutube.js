@@ -2,7 +2,7 @@ const mysql2 = require("mysql2");
 
 require("dotenv").config();
 
-const { arrHistory, user_name } = require("../array/arrHistory");
+const { arrHistory, emailNickName } = require("../array/arrHistory");
 
 const { HOST, USER, DATABASE, PASSWORD } = process.env;
 
@@ -58,15 +58,15 @@ function resultArr(arrHistory) {
     }
   }
 
-  console.log(user_name);
+  console.log(emailNickName);
   connection.query(
-    `CREATE TABLE IF NOT EXISTS ${user_name} (
+    `CREATE TABLE IF NOT EXISTS ${emailNickName} (
 
       user_history_youtube_id VARCHAR(20)  PRIMARY KEY,
       title VARCHAR(1000) NOT NULL,
       titleUrl VARCHAR(255) NOT NULL,
       timeDate DATETIME NOT NULL
-   
+
     )`,
     (error, results, fields) => {
       if (error) {
@@ -81,7 +81,7 @@ function resultArr(arrHistory) {
     const a = history[i];
     console.log(a);
 
-    const sql = `INSERT INTO ${user_name} (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
+    const sql = `INSERT INTO ${emailNickName} (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
 
     connection.execute(sql, a, function (err) {
       if (err) {

@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const ytdl = require("ytdl-core");
 
 const app = express();
@@ -98,6 +98,21 @@ app.post("/login", async (req, res) => {
     res.status(200).send("Вхід успішний!");
   });
 });
+
+app.get("/tiktok", async (req, res) => {
+  const videoUrl = req.query.url;
+
+  try {
+    const videoMeta = await TikTokScraper.getVideoMeta(videoUrl);
+    const videoPath = videoMeta.collector[0].videoUrl;
+    const fileName = path.basename(videoPath);
+    res.download(videoPath, fileName);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Unable to download video.");
+  }
+});
+
 app.get("/download", async (req, res, next) => {
   try {
     const url = req.query.url;
