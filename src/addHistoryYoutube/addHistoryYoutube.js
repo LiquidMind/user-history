@@ -15,13 +15,13 @@ const connection = mysql2.createConnection({
 
 //===================== table connection ============  watch_history - table =========
 
-connection.connect(function (err) {
-  if (err) {
-    return console.error("помилка" + err.message);
-  } else {
-    console.log("підключення успішне");
-  }
-});
+// connection.connect(function (err) {
+//   if (err) {
+//     return console.error("помилка" + err.message);
+//   } else {
+//     console.log("підключення успішне");
+//   }
+// });
 
 // connection.execute(
 //   "SELECT * FROM user_history_youtube",
@@ -59,6 +59,7 @@ function resultArr(arrHistory) {
   }
 
   console.log(emailNickName);
+
   connection.query(
     `CREATE TABLE IF NOT EXISTS ${emailNickName} (
 

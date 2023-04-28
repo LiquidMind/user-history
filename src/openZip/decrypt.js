@@ -1,9 +1,9 @@
 const crypto = require("crypto");
-const { db } = require("../model/dbConnection");
 require("dotenv").config();
 const { SECRETPAS } = process.env;
 const downloadGoogleData = require("./saveUserZip");
 const createZipFile = require("./renameZip");
+const openZipFile = require("./openZip");
 
 console.log(SECRETPAS);
 
@@ -18,7 +18,8 @@ function decrypt(email, encryptedText) {
 
   let decrypted = decipher.update(encryptedTextOnly, "hex", "utf8"); // розшифрування шифротексту
   decrypted += decipher.final("utf8"); // додавання розшифрованого тексту до результату
-  // createZipFile(email);
+  createZipFile(email);
+  openZipFile(email);
   return downloadGoogleData(email, decrypted); // Повертаємо розшифрований текст
 }
 

@@ -9,7 +9,7 @@
     "fetch": "nodemon ./src/newFetch/fetchAddCicle.js",
     "history": "nodemon ./src/addHistoryYoutube/addHistoryYoutube.js",
     "arrHistory": "nodemon ./src/array/arrHistory.js",
-    "openZip": "nodemon ./src/openZip/index.js",
+    "openZip": "nodemon ./src/openZip/openZip.js",
     "renameZip": "nodemon ./src/openZip/renameZip.js",
     "saveUserZip": "nodemon ./src/openZip/saveUserZip.js",
     "updateHistory": "nodemon ./src/updateHistory/updateHistory.js",
