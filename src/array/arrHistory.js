@@ -1,15 +1,20 @@
 const fs = require("fs");
 
-const emailNickName = require("../emailName/email");
+const { fileZipName } = require("../dataUser/dataUser");
+
+const emailNickName = fileZipName;
+console.log(emailNickName);
 
 let folderPath = `./src/openZip/historyUsers/${emailNickName}`;
 let arrHistory = [];
+
+console.log(arrHistory);
 let folderExists = false;
 
 const processFolder = () => {
   if (fs.existsSync(folderPath)) {
     console.log(`Папка "${folderPath}" знайдена`);
-    // Тут можна продовжити виконання вашого коду для цієї папки
+
     const arr = require(`../openZip/historyUsers/${emailNickName}/YouTube і YouTube Music/історія/історія переглядів.json`);
     arrHistory.push(...arr);
     console.log("Дані збережено в масив arrHistory");
@@ -22,7 +27,7 @@ const processFolder = () => {
     folderExists = false;
     setTimeout(() => {
       processFolder();
-    }, 1000); // спробувати знову через 1 секунду
+    }, 5000); // спробувати знову через 1 секунду
   } else {
     console.log(`Папки "${folderPath}" не знайдено`);
     if (!folderExists) {
@@ -31,19 +36,17 @@ const processFolder = () => {
           folderExists = true;
           console.log("Папка з'явилась!");
           clearInterval(intervalId);
-          // Тут можна продовжити виконання вашого коду для нової папки
+
           processFolder();
         } else {
-          console.log("Папки все ще не існує");
+          console.log(`Папки ${emailNickName} все ще не існує`);
         }
-      }, 1000); // перевіряти кожну секунду
+      }, 3000); // перевіряти кожну секунду
     }
   }
 };
 
 processFolder();
-
-// Тут ви можете продовжити виконання вашого коду після завершення функції з інтервалом
 
 setTimeout(() => {
   console.log(arrHistory);
