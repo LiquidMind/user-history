@@ -1,64 +1,64 @@
 const fs = require("fs");
-
-// const { fileZipName } = require("../dataUser/dataUser");
-// const emailNickName = "andriykozh32@gmail.com";
-
+const path = require("path");
 const addHistoryYoutube = require("../addHistoryYoutube/addHistoryYoutube");
-let arrHistory = [];
 
+// Функція historyArray обробляє історію переглядів YouTube для вказаного користувача
 function historyArray(emailNickName) {
   console.log(emailNickName);
 
-  let folderPath = `./src/openZip/historyUsers/${emailNickName}`;
+  // Шлях до теки з історією користувача
+  const folderPath = path.join(
+    __dirname,
+    `../openZip/historyUsers/${emailNickName}`
+  );
 
-  console.log(arrHistory);
   let folderExists = false;
 
+  // Функція processFolder перевіряє наявність теки та обробляє дані історії переглядів
   const processFolder = () => {
+    // Якщо тека існує
     if (fs.existsSync(folderPath)) {
-      console.log(`Папка "${folderPath}" знайдена`);
+      console.log(`Тека "${folderPath}" знайдена`);
 
-      const arr = require(`../openZip/historyUsers/${emailNickName}/YouTube і YouTube Music/історія/історія переглядів.json`);
-      arrHistory.push(...arr);
+      // Завантажити дані історії переглядів із файлу JSON
+      const arr = require(path.join(
+        folderPath,
+        "/YouTube і YouTube Music/історія/історія переглядів.json"
+      ));
+
+      // Додати дані історії переглядів в масив arrHistory
+      const arrHistory = [...arr];
       addHistoryYoutube(arrHistory, emailNickName);
-      console.log("Дані збережено в масив arrHistory");
+      console.log("Дані збережено в масиві arrHistory");
 
-      // Видалити папку
+      // Видалити теку
       fs.rmdirSync(folderPath, { recursive: true });
-      console.log(`Папку "${folderPath}" видалено`);
+      console.log(`Теку "${folderPath}" видалено`);
 
-      // Повторно запустити код на пошук папки
-      folderExists = false;
+      // Запустити код знову для пошуку теки через 5 секунд
       setTimeout(() => {
         processFolder();
-      }, 5000); // спробувати знову через 1 секунду
+      }, 5000);
     } else {
-      console.log(`Папки "${folderPath}" не знайдено`);
+      console.log(`Теки "${folderPath}" не знайдено`);
+      // Якщо тека не існує, перевіряємо нові теки
       if (!folderExists) {
         const intervalId = setInterval(() => {
           if (fs.existsSync(folderPath)) {
             folderExists = true;
-            console.log("Папка з'явилась!");
+            console.log("Тека з'явилася!");
             clearInterval(intervalId);
-
             processFolder();
           } else {
-            console.log(`Папки ${emailNickName} все ще не існує`);
+            console.log(`Теки ${emailNickName} все ще не існує`);
           }
-        }, 3000); // перевіряти кожну секунду
+        }, 3000);
       }
     }
   };
 
+  // Запустити функцію processFolder
   processFolder();
-
-  setTimeout(() => {
-    console.log(arrHistory);
-  }, 5000); // вивести результат через 5 секунд
 }
-
-// const address = "test@.gmail.com";
-// const user_name = address.replace(/[@.]/g, ""); //max190716ukrnet
-// console.log(user_name);
 
 module.exports = { historyArray };

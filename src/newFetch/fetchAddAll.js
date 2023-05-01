@@ -39,7 +39,7 @@ function historyId(arrViewes) {
       // console.log(`${videoID} ${vieweVideo}`);
 
       const sqlQuery =
-        "UPDATE user_history_youtube SET   viewes=?, oklike=?, lengthVideo=?  WHERE  user_history_youtube_id=?";
+        "UPDATE videos_all SET   viewes=?, oklike=?, lengthVideo=?  WHERE  id =?";
       db.query(
         sqlQuery,
         [vieweVideo || "0", likeVideo || "0", durationInSeconds || 0, videoID],

@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // read all "GET"
 app.get("/api/readData", (req, res) => {
-  const sqlQuery = "SELECT lengthVideo FROM user_history_youtube ";
+  const sqlQuery = "SELECT lengthVideo FROM videos_all ";
 
   db.query(sqlQuery, (err, result) => {
     if (err) {
@@ -38,8 +38,7 @@ app.get("/api/readData", (req, res) => {
 app.get("/api/readVideo/:user_history_youtube_id", (req, res) => {
   const videoLink = req.params.watch_history_id;
 
-  const sqlQuery =
-    "SELECT * FROM user_history_youtube WHERE user_history_youtube_id=?"; // table name
+  const sqlQuery = "SELECT * FROM videos_all WHERE user_history_youtube_id=?"; // table name
 
   db.query(sqlQuery, videoLink, (err, result) => {
     if (err) {
@@ -61,7 +60,7 @@ app.post("/api/createHistory", (req, res) => {
   const list = req.body.list;
 
   const sqlQuery =
-    "INSERT INTO user_history_youtube (user_history_youtube_id,title,titleURL,timeDate,list) VALUE (?,?,?,?,?)";
+    "INSERT INTO videos_all (user_history_youtube_id,title,titleURL,timeDate,list) VALUE (?,?,?,?,?)";
 
   db.query(
     sqlQuery,

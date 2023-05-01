@@ -4,7 +4,7 @@ lastId = null;
 
 setInterval(() => {
   const mysqlQuery =
-    "SELECT user_history_youtube_id FROM user_history_youtube WHERE subtitleAdd = 'falce' ORDER BY viewes DESC LIMIT 0, 1";
+    "SELECT id FROM videos_all WHERE subtitleAdd = 'falce' ORDER BY viewes DESC LIMIT 0, 1";
 
   db.query(mysqlQuery, function (err, results) {
     if (err) {
@@ -37,7 +37,7 @@ async function runFunctions(rowID) {
     console.log("Function 1");
   } catch (error) {
     console.error("Error in addSubtitle:", error);
-    const mysqlQuery = `UPDATE user_history_youtube SET statusSub = ? WHERE user_history_youtube_id = "${rowID}"`;
+    const mysqlQuery = `UPDATE videos_all SET statusSub = ? WHERE id = "${rowID}"`;
     return db.query(mysqlQuery, ["noVideo", rowID], (err, result) => {
       if (err) throw err;
       console.log("Number of rows affected:", result.affectedRows);
@@ -50,7 +50,7 @@ async function runFunctions(rowID) {
   } catch (error) {
     console.error("Error in textInJson:", error);
 
-    const mysqlQuery = `UPDATE user_history_youtube SET statusSub = 'noSubtitle' WHERE user_history_youtube_id = "${rowID}"`;
+    const mysqlQuery = `UPDATE videos_all SET statusSub = 'noSubtitle' WHERE id = "${rowID}"`;
     db.query(mysqlQuery, (err, result) => {
       if (err) throw err;
       console.log("Number of rows affected:", result.affectedRows);
@@ -74,7 +74,7 @@ async function runFunctions(rowID) {
   try {
     await sortWord(rowID);
     console.log("Function 5");
-    const mysqlQuery = `UPDATE user_history_youtube SET statusSub = 'subtitleSaved' WHERE user_history_youtube_id = "${rowID}"`;
+    const mysqlQuery = `UPDATE videos_all SET statusSub = 'subtitleSaved' WHERE id = "${rowID}"`;
     db.query(mysqlQuery, (err, result) => {
       if (err) throw err;
       console.log("Number of rows affected:", result.affectedRows);
@@ -86,7 +86,7 @@ async function runFunctions(rowID) {
   // try {
   //   await addDB(rowID);
   //   console.log("ADD DB");
-  //   const mysqlQuery = `UPDATE user_history_youtube SET statusSub = 'subtitleSaved' WHERE user_history_youtube_id = "${rowID}"`;
+  //   const mysqlQuery = `UPDATE videos_all SET statusSub = 'subtitleSaved' WHERE id = "${rowID}"`;
   //   db.query(mysqlQuery, (err, result) => {
   //     if (err) throw err;
   //     console.log("Number of rows affected:", result.affectedRows);

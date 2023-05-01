@@ -10,8 +10,7 @@ const URL = "https://www.googleapis.com/youtube/v3/videos";
 let lastId = null;
 
 setInterval(() => {
-  const mysqlQuery =
-    "SELECT user_history_youtube_id FROM user_history_youtube WHERE lengthVideo = 'false'";
+  const mysqlQuery = "SELECT id FROM videos_all WHERE lengthVideo = 'false'";
 
   db.query(mysqlQuery, function (err, results) {
     if (err) {
@@ -99,7 +98,7 @@ function historyId(arrViewes) {
     }
     // update the database with the video information
     const sqlQuery =
-      "UPDATE user_history_youtube SET   viewes=?, oklike=?, lengthVideo=?, language=?  WHERE  user_history_youtube_id=?";
+      "UPDATE videos_all SET   viewes=?, oklike=?, lengthVideo=?, language=?  WHERE  id=?";
     db.query(
       sqlQuery,
       [vieweVideo, likeVideo, durationInSeconds, langDetected, arrViewes],

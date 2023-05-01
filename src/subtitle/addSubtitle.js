@@ -8,7 +8,7 @@ const { db } = require("../model/dbConnection");
 
 const addSubtitle = (arrTest) => {
   return new Promise((resolve, reject) => {
-    const mysqlQuery = `SELECT language FROM user_history_youtube WHERE user_history_youtube_id = "${arrTest}";`;
+    const mysqlQuery = `SELECT language FROM videos_all WHERE id = "${arrTest}";`;
     db.query(mysqlQuery, function res(err, result) {
       if (err) {
         console.log(err);
@@ -43,8 +43,7 @@ const addSubtitle = (arrTest) => {
         .then((output) => {
           console.log("Subtitles downloaded:", output);
           console.log(output); // video subtitles processed
-          const sqlQuery =
-            "UPDATE user_history_youtube SET subtitleAdd=? WHERE user_history_youtube_id=?";
+          const sqlQuery = "UPDATE videos_all SET subtitleAdd=? WHERE id=?";
           db.query(sqlQuery, [1, arrTest], (err, result) => {
             if (err) {
               console.log(err);
@@ -57,8 +56,7 @@ const addSubtitle = (arrTest) => {
         })
         .catch((err) => {
           const noVideo = "noVideo";
-          const sqlQuery =
-            "UPDATE user_history_youtube SET subtitleAdd=? WHERE user_history_youtube_id=?";
+          const sqlQuery = "UPDATE videos_all SET subtitleAdd=? WHERE id=?";
           db.query(sqlQuery, [1, arrTest], (err, result) => {
             if (err) {
               console.log(err);

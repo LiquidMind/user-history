@@ -38,7 +38,7 @@ function addDB(objWord) {
     for (let i = 0; i < arrOne.length; i++) {
       const arrIndx = arrOne[i];
 
-      const sql = `INSERT INTO words (words, num_repetitions,numberOfVideos)
+      const sql = `INSERT INTO stat_tokens_all (words, num_repetitions,numberOfVideos)
     VALUES ('${arrIndx[0]}', ${arrIndx[1]}, ${increaseByOne})
     ON DUPLICATE KEY UPDATE num_repetitions = num_repetitions + ${arrIndx[1]},numberOfVideos = numberOfVideos + ${increaseByOne};`;
 
@@ -57,7 +57,7 @@ function addDB(objWord) {
 
       // console.log(arrIndxWhole[0]);
 
-      const sqlWhole = `INSERT INTO woleWords (wordsWhole, num_Whole,numberOfVideosWhole)
+      const sqlWhole = `INSERT INTO stat_words_all (wordsWhole, num_Whole,numberOfVideosWhole)
         VALUES ('${arrIndxWhole[0]}', ${arrIndxWhole[1]}, ${increaseByOne})
         ON DUPLICATE KEY UPDATE num_Whole = num_Whole + ${arrIndxWhole[1]},numberOfVideosWhole = numberOfVideosWhole + ${increaseByOne};`;
 

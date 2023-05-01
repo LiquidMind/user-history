@@ -6,7 +6,7 @@ lastId = null;
 
 setInterval(() => {
   const mysqlQuery =
-    "SELECT user_history_youtube_id FROM user_history_youtube WHERE statusWord = 'false' AND statusSub='subtitleSaved'  ORDER BY viewes DESC";
+    "SELECT id FROM videos_all WHERE statusWord = 'false' AND statusSub='subtitleSaved'  ORDER BY viewes DESC";
 
   db.query(mysqlQuery, function (err, results) {
     if (err) {
@@ -27,8 +27,7 @@ setInterval(() => {
 
 async function frequency(objWords) {
   try {
-    const sqlQuery =
-      "UPDATE user_history_youtube SET statusWord=? WHERE user_history_youtube_id=?";
+    const sqlQuery = "UPDATE videos_all SET statusWord=? WHERE id=?";
     db.query(sqlQuery, [1, objWords], (err, result) => {
       if (err) {
         console.log(err);
@@ -77,8 +76,7 @@ async function frequency(objWords) {
   ////////////////////////////////////
 
   try {
-    const sqlQuery =
-      "UPDATE user_history_youtube SET statusWord=? WHERE user_history_youtube_id=?";
+    const sqlQuery = "UPDATE videos_all SET statusWord=? WHERE id=?";
     db.query(sqlQuery, [1, objWords], (err, result) => {
       if (err) {
         console.log(err);
@@ -132,7 +130,7 @@ async function frequency(objWords) {
   try {
     await addDB(objWords);
     console.log("ADD DB");
-    const mysqlQuery = `UPDATE user_history_youtube SET statusSub = 'subtitleSaved' WHERE user_history_youtube_id = "${objWords}"`;
+    const mysqlQuery = `UPDATE videos_all SET statusSub = 'subtitleSaved' WHERE id = "${objWords}"`;
     db.query(mysqlQuery, (err, result) => {
       if (err) throw err;
       console.log("Number of rows affected:", result.affectedRows);

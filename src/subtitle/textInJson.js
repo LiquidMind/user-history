@@ -7,7 +7,7 @@ const { db } = require("../model/dbConnection");
 
 const textInJson = (arrHistory) => {
   return new Promise((resolve, reject) => {
-    const mysqlQuery = `SELECT language FROM user_history_youtube WHERE user_history_youtube_id = "${arrHistory}";`;
+    const mysqlQuery = `SELECT language FROM videos_all WHERE id = "${arrHistory}";`;
     db.query(mysqlQuery, function res(err, result) {
       if (err) {
         console.log(err);

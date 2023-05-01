@@ -33,7 +33,7 @@ app.get("/api/allInfoUser", (req, res) => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const sqlQuery = `SELECT uh.user_history_youtube_id, uh.statusSub, uh.statusWord, uh.language, uh.title, uh.titleUrl, uh.viewes, uh.lengthVideo, uh.okLike FROM ${name} AS ${name} JOIN user_history_youtube AS uh ON ${name}.user_history_youtube_id = uh.user_history_youtube_id LIMIT ? OFFSET ?;`;
+  const sqlQuery = `SELECT uh.id, uh.statusSub, uh.statusWord, uh.language, uh.title, uh.titleUrl, uh.viewes, uh.lengthVideo, uh.okLike FROM ${name} AS ${name} JOIN videos_all AS uh ON ${name}.id = uh.id LIMIT ? OFFSET ?;`;
 
   db.query(sqlQuery, [limit, offset], (err, result) => {
     if (err) {
@@ -146,15 +146,15 @@ app.use((error, req, res, next) => {
   res.status(500).send("Internal server error");
 });
 
-app.get("/api/:user_history_youtube_id", (req, res) => {
-  const videoLink = req.params.user_history_youtube_id;
+app.get("/api/:id", (req, res) => {
+  const videoLink = req.params.id;
   console.log(videoLink);
 
   const sql = `SELECT  viewes, lengthVideo, okLike
 FROM max190716
 JOIN user_history_youtube
-ON max190716.user_history_youtube_id = user_history_youtube.user_history_youtube_id
-WHERE user_history_youtube.user_history_youtube_id =  '${videoLink}';`;
+ON max190716.id = user_history_youtube.id
+WHERE user_history_youtube.id =  '${videoLink}';`;
 
   db.query(sql, (err, result) => {
     if (err) {

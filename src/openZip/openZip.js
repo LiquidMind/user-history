@@ -2,8 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const AdmZip = require("adm-zip");
 
-// const fileZipName = "dii.iskra@gmail.com";
-
 function openZipFile(fileZipName) {
   const searchDir =
     "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP";

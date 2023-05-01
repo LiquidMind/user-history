@@ -74,7 +74,7 @@ function addHistoryYoutube(arrHistory, emailUser) {
         connection.query(
           `CREATE TABLE IF NOT EXISTS videos_user_${userId} (
 
-      user_history_youtube_id VARCHAR(20)  PRIMARY KEY,
+      id VARCHAR(20)  PRIMARY KEY,
       title VARCHAR(1000) NOT NULL,
       titleUrl VARCHAR(255) NOT NULL,
       timeDate DATETIME NOT NULL
@@ -93,7 +93,7 @@ function addHistoryYoutube(arrHistory, emailUser) {
           const a = history[i];
           console.log(a);
 
-          const sql = `INSERT INTO videos_user_${userId}  (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
+          const sql = `INSERT INTO videos_user_${userId}  (id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
 
           connection.execute(sql, a, function (err) {
             if (err) {
@@ -108,7 +108,7 @@ function addHistoryYoutube(arrHistory, emailUser) {
           console.log(a);
 
           const sql =
-            "INSERT INTO user_history_youtube (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)"; // watch_history - table
+            "INSERT INTO videos_all (id, title, titleUrl, timeDate) VALUE (?,?,?,?)"; // watch_history - table
 
           connection.execute(sql, a, function (err) {
             if (err) {

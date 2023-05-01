@@ -62,7 +62,7 @@ function renameZipFile(fileZipName) {
   // Очікуємо на появу файлу
   setInterval(() => {
     processFile();
-  }, 3000);
+  }, 5000);
 }
 
 module.exports = renameZipFile;

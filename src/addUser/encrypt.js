@@ -23,13 +23,11 @@ function encrypt(text, masterPassword) {
   return ` ${iv.toString("hex")}:${encrypted}:${tag}`;
 }
 
-// ЗНАЙТИ В БД ЕМЕЙЛ ВИТЯГНУТИ ID ТА ПЕРЕІМЕНУВАТИ НА USER_$(ID)
-
 // Приклад використання функції encrypt
 const encryptedText = encrypt(password, SECRETPAS);
 console.log(encryptedText); // Виведе рядок, що складається з iv, encrypted та tag, розділених двокрапкою
 
-const sqlQuery = `INSERT INTO google_test (google_email, google_password) VALUE (?,?)`;
+const sqlQuery = `INSERT INTO google_users (google_email, google_password) VALUE (?,?)`;
 db.query(sqlQuery, [email, encryptedText], (err, result) => {
   if (err) {
     console.log(err);
