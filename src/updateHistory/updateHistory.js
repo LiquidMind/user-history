@@ -50,7 +50,7 @@ function fetchAndUpdate() {
     }
 
     // Виклик функції знову через 5 секунд
-    setTimeout(fetchAndUpdate, 60000);
+    setTimeout(fetchAndUpdate, 100000);
   });
 }
 

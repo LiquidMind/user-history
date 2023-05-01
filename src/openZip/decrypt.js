@@ -4,6 +4,7 @@ const { SECRETPAS } = process.env;
 const downloadGoogleData = require("./saveUserZip");
 const createZipFile = require("./renameZip");
 const openZipFile = require("./openZip");
+const { historyArray } = require("../array/arrHistory");
 
 console.log(SECRETPAS);
 
@@ -20,6 +21,7 @@ function decrypt(email, encryptedText) {
   decrypted += decipher.final("utf8"); // додавання розшифрованого тексту до результату
   createZipFile(email);
   openZipFile(email);
+  historyArray(email);
   return downloadGoogleData(email, decrypted); // Повертаємо розшифрований текст
 }
 

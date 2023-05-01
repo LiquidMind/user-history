@@ -2,7 +2,8 @@ const mysql2 = require("mysql2");
 
 require("dotenv").config();
 
-const { arrHistory, emailNickName } = require("../array/arrHistory");
+const { arrHistory } = require("../array/arrHistory");
+// const arrHistory = "dii.iskra@gmail.com";
 
 const { HOST, USER, DATABASE, PASSWORD } = process.env;
 
@@ -35,7 +36,8 @@ const connection = mysql2.createConnection({
 
 const history = [];
 
-function resultArr(arrHistory) {
+function addHistoryYoutube(arrHistory, emailUser) {
+  console.log(arrHistory);
   for (let i = 0; i < arrHistory.length; i++) {
     const arrIndx = arrHistory[i];
 
@@ -58,10 +60,19 @@ function resultArr(arrHistory) {
     }
   }
 
-  console.log(emailNickName);
+  connection.execute(
+    `SELECT id FROM google_test WHERE google_email = "${emailUser}" `,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        const objId = result[0];
+        const userId = Object.values(objId)[0];
+        console.log(userId);
 
-  connection.query(
-    `CREATE TABLE IF NOT EXISTS ${emailNickName} (
+        connection.query(
+          `CREATE TABLE IF NOT EXISTS videos_user_${userId} (
 
       user_history_youtube_id VARCHAR(20)  PRIMARY KEY,
       title VARCHAR(1000) NOT NULL,
@@ -69,44 +80,49 @@ function resultArr(arrHistory) {
       timeDate DATETIME NOT NULL
 
     )`,
-    (error, results, fields) => {
-      if (error) {
-        console.error("Помилка створення таблиці:", error);
-        return;
+          (error, results, fields) => {
+            if (error) {
+              console.error("Помилка створення таблиці:", error);
+              return;
+            }
+            console.log("Таблицю оновленно успішно!");
+          }
+        );
+
+        for (let i = 0; i < history.length; i++) {
+          const a = history[i];
+          console.log(a);
+
+          const sql = `INSERT INTO videos_user_${userId}  (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
+
+          connection.execute(sql, a, function (err) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("VIDEO USER ADD");
+            }
+          });
+        }
+        for (let i = 0; i < history.length; i++) {
+          const a = history[i];
+          console.log(a);
+
+          const sql =
+            "INSERT INTO user_history_youtube (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)"; // watch_history - table
+
+          connection.execute(sql, a, function (err) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("УСПІШНО ДОБАВЛЕНО");
+            }
+          });
+        }
       }
-      console.log("Таблицю оновленно успішно!");
     }
   );
-
-  for (let i = 0; i < history.length; i++) {
-    const a = history[i];
-    console.log(a);
-
-    const sql = `INSERT INTO ${emailNickName} (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)`; // watch_history - table
-
-    connection.execute(sql, a, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("VIDEO USER ADD");
-      }
-    });
-  }
-  for (let i = 0; i < history.length; i++) {
-    const a = history[i];
-    console.log(a);
-
-    const sql =
-      "INSERT INTO user_history_youtube (user_history_youtube_id, title, titleUrl, timeDate) VALUE (?,?,?,?)"; // watch_history - table
-
-    connection.execute(sql, a, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("УСПІШНО ДОБАВЛЕНО");
-      }
-    });
-  }
 }
 
-resultArr(arrHistory);
+module.exports = addHistoryYoutube;
+
+// resultArr(arrHistory, emailNickName);
