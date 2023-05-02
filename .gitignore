@@ -112,17 +112,12 @@ dist
 
 # ignore all files and directories within myfolder
 src/subtitle/json_subtitle/*
-!src/subtitle/json_subtitle/
 
 # ignore all files and directories within myfolder
 src/subtitle/subtitleVTT/*
-!src/subtitle/subtitleVTT/
-
 
 # ignore all files and directories within myfolder
 src/subtitle/wordAndIndexInFolders/*
-!src/subtitle/wordAndIndexInFolders/
 
 # ignore all files and directories within myfolder
 src/subtitle/wordWoleAndIndexInFolders/*
-!src/subtitle/wordWoleAndIndexInFolders/
