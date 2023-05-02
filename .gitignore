@@ -112,16 +112,16 @@ dist
 
 # Ignore all files and directories within myfolder
 src/subtitle/json_subtitle/*
-!src/subtitle/json_subtitle/
+!src/subtitle/json_subtitle/.gitkeep
 
 # Ignore all files and directories within myfolder
 src/subtitle/subtitleVTT/*
-!src/subtitle/subtitleVTT/
+!src/subtitle/subtitleVTT/.gitkeep
 
 # Ignore all files and directories within myfolder
 src/subtitle/wordAndIndexInFolders/*
-!src/subtitle/wordAndIndexInFolders/
+!src/subtitle/wordAndIndexInFolders/.gitkeep
 
 # Ignore all files and directories within myfolder
 src/subtitle/wordWoleAndIndexInFolders/*
-!src/subtitle/wordWoleAndIndexInFolders/
+!src/subtitle/wordWoleAndIndexInFolders/.gitkeep
