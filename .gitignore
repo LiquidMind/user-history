@@ -110,14 +110,8 @@ dist
 # **/.DS_Store
 
 
-# ignore all files and directories within myfolder
-src/subtitle/json_subtitle/*
-
-# ignore all files and directories within myfolder
-src/subtitle/subtitleVTT/*
-
-# ignore all files and directories within myfolder
-src/subtitle/wordAndIndexInFolders/*
-
-# ignore all files and directories within myfolder
-src/subtitle/wordWoleAndIndexInFolders/*
+# Ignore the contents of these folders, but not the folders themselves
+src/subtitle/json_subtitle/**/*
+src/subtitle/subtitleVTT/**/*
+src/subtitle/wordAndIndexInFolders/**/*
+src/subtitle/wordWoleAndIndexInFolders/**/*
