@@ -9,7 +9,8 @@ function openZipFile(fileZipName) {
     "/Users/andrijkozevnikov/Documents/ProjectYoutube/user-history/src/openZip/historyUsers";
   const zipFileName = `${fileZipName}.zip`;
   const newFolderName = `${fileZipName}`;
-  const moveToDir = "/Users/andrijkozevnikov/Documents/ProjectYoutube/Archive";
+  const moveToDir =
+    "/Users/andrijkozevnikov/Documents/ProjectYoutube/Archive/zipFile_users";
   const waitInterval = 5000;
 
   // Функція для отримання поточної дати у форматі рядка "YYYY-MM-DD"

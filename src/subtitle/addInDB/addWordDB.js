@@ -38,7 +38,7 @@ function addDB(objWord) {
     for (let i = 0; i < arrOne.length; i++) {
       const arrIndx = arrOne[i];
 
-      const sql = `INSERT INTO stat_tokens_all (words, num_repetitions,numberOfVideos)
+      const sql = `INSERT INTO stat__tokens_all (words, num_repetitions,numberOfVideos)
     VALUES ('${arrIndx[0]}', ${arrIndx[1]}, ${increaseByOne})
     ON DUPLICATE KEY UPDATE num_repetitions = num_repetitions + ${arrIndx[1]},numberOfVideos = numberOfVideos + ${increaseByOne};`;
 
@@ -47,7 +47,7 @@ function addDB(objWord) {
           console.log(err);
           reject(err);
         } else {
-          // console.log("УСПІШНО ДОБАВЛЕНО");
+          console.log("УСПІШНО ДОБАВЛЕНО");
           resolve();
         }
       });
@@ -57,16 +57,16 @@ function addDB(objWord) {
 
       // console.log(arrIndxWhole[0]);
 
-      const sqlWhole = `INSERT INTO stat_words_all (wordsWhole, num_Whole,numberOfVideosWhole)
+      const sqlWhole = `INSERT INTO stat__words_all (words, num_repetitions,numberOfVideosWhole)
         VALUES ('${arrIndxWhole[0]}', ${arrIndxWhole[1]}, ${increaseByOne})
-        ON DUPLICATE KEY UPDATE num_Whole = num_Whole + ${arrIndxWhole[1]},numberOfVideosWhole = numberOfVideosWhole + ${increaseByOne};`;
+        ON DUPLICATE KEY UPDATE num_repetitions = num_repetitions + ${arrIndxWhole[1]},numberOfVideosWhole = numberOfVideosWhole + ${increaseByOne};`;
 
       conection.execute(sqlWhole, arrIndxWhole, function (err) {
         if (err) {
           console.log(err);
           reject(err);
         } else {
-          // console.log("УСПІШНО ДОБАВЛЕНО");
+          console.log("УСПІШНО ДОБАВЛЕНО");
           resolve();
         }
       });

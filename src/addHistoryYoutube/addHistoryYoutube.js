@@ -2,7 +2,7 @@ const mysql2 = require("mysql2");
 
 require("dotenv").config();
 
-const { arrHistory } = require("../array/arrHistory");
+// const { arrHistory } = require("../array/arrHistory");
 // const arrHistory = "dii.iskra@gmail.com";
 
 const { HOST, USER, DATABASE, PASSWORD } = process.env;
@@ -72,20 +72,19 @@ function addHistoryYoutube(arrHistory, emailUser) {
         console.log(userId);
 
         connection.query(
-          `CREATE TABLE IF NOT EXISTS videos_user_${userId} (
-
-      id VARCHAR(20)  PRIMARY KEY,
-      title VARCHAR(1000) NOT NULL,
-      titleUrl VARCHAR(255) NOT NULL,
-      timeDate DATETIME NOT NULL
-
-    )`,
+          `CREATE TABLE IF NOT EXISTS videos_user_${userId} ( 
+    id VARCHAR(20) PRIMARY KEY,
+    title VARCHAR(1000) NOT NULL,
+    titleUrl VARCHAR(255) NOT NULL,
+    timeDate DATETIME NOT NULL,
+    status ENUM('saveWords', 'noWords', 'proces') NOT NULL DEFAULT 'proces',
+  )`,
           (error, results, fields) => {
             if (error) {
               console.error("Помилка створення таблиці:", error);
               return;
             }
-            console.log("Таблицю оновленно успішно!");
+            console.log("Таблицю оновлено успішно!");
           }
         );
 
@@ -122,7 +121,6 @@ function addHistoryYoutube(arrHistory, emailUser) {
     }
   );
 }
-
 module.exports = addHistoryYoutube;
 
 // resultArr(arrHistory, emailNickName);

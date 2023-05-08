@@ -55,7 +55,6 @@ const addSubtitle = (arrTest) => {
           });
         })
         .catch((err) => {
-          const noVideo = "noVideo";
           const sqlQuery = "UPDATE videos_all SET subtitleAdd=? WHERE id=?";
           db.query(sqlQuery, [1, arrTest], (err, result) => {
             if (err) {

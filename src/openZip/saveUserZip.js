@@ -90,28 +90,33 @@ async function downloadGoogleData(email, password) {
 
     //Знімаємо всі галочки
     // Deselect all products
-    await page.waitForSelector('button[aria-label="Скасувати вибір"]');
+    await page.waitForSelector('div[jsname="UylMne"] button[jsname="Pr7Yme"]');
     await page.waitForTimeout(1000); // wait for button to be fully loaded
 
-    await page.click('button[aria-label="Скасувати вибір"]', { delay: 250 });
+    await page.click('div[jsname="UylMne"] button[jsname="Pr7Yme"]', {
+      delay: 250,
+    });
 
     //ставимо галочку на YouTube і YouTube Music
     // Select YouTube і YouTube Music
     await page.waitForSelector(
-      '.VfPpkd-muHVFf-bMcfAe[type="checkbox"][name="YouTube і YouTube Music"]'
+      'div[data-id="youtube"][data-enabled="true"] div[data-indeterminate="false"][jsname="PE3haf"] input[type="checkbox"][jsname="YPqjbf"]'
     );
     await page.click(
-      '.VfPpkd-muHVFf-bMcfAe[type="checkbox"][name="YouTube і YouTube Music"]',
+      'div[data-id="youtube"][data-enabled="true"] div[data-indeterminate="false"][jsname="PE3haf"] input[type="checkbox"][jsname="YPqjbf"]',
       { delay: 2000 }
     );
 
     // Клікаєм на кнопку для вибора даних які хочем скачати
     await page.waitForSelector(
-      `div[data-service="youtube"] button[jsname="DNRMdf"]`
+      `div[data-service="youtube"][data-is-transfer="false"] button[jsname="DNRMdf"]`
     );
-    await page.click(`div[data-service="youtube"] button[jsname="DNRMdf"]`, {
-      delay: 3000,
-    });
+    await page.click(
+      `div[data-service="youtube"][data-is-transfer="false"] button[jsname="DNRMdf"]`,
+      {
+        delay: 3000,
+      }
+    );
 
     // Знімаємо всі галочки
 
@@ -189,10 +194,10 @@ async function downloadGoogleData(email, password) {
 
     // Клік Наступний крок
 
-    await page.waitForSelector('button[aria-label="Наступний крок"]');
+    await page.waitForSelector('div[jsname="OCpkoe"] button[jsname="Pr7Yme"]');
     await page.waitForTimeout(2000); // wait for button to be fully loaded
 
-    await page.click('button[aria-label="Наступний крок"]');
+    await page.click('div[jsname="OCpkoe"] button[jsname="Pr7Yme"]');
 
     // // Клік Експортувати дані
 
@@ -227,7 +232,7 @@ async function downloadGoogleData(email, password) {
   // Close the browser after a short delay
   setTimeout(async () => {
     await browser.close();
-  }, 5000);
+  }, 10000);
 }
 
 module.exports = downloadGoogleData;
