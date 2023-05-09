@@ -1,8 +1,8 @@
-const { db } = require("../../model/dbConnection");
+const { db } = require("./model/dbConnection");
 
 const util = require("util");
-const addFolderWordsUser = require("./addFolderWordsUser");
-const addDbUserWord = require("./addDbUserWord");
+const addFolderWordsUser = require("./subtitle/wordsTableUsers/addFolderWordsUser");
+const addDbUserWord = require("./subtitle/wordsTableUsers/addDbUserWord");
 const queryAsync = util.promisify(db.query).bind(db);
 
 const query =
@@ -10,33 +10,39 @@ const query =
 
 async function main() {
   const rows = await queryAsync(query);
-  const sortedRows = rows.sort(
-    (a, b) => a.historyUpdatedAt - b.historyUpdatedAt
-  );
+
+  let currentDateIndex = 0;
+  const dateIdPairs = rows.map((row) => ({
+    date: row.historyUpdatedAt,
+    id: row.id,
+  }));
+
+  function getNextDateIdPair() {
+    const currentDateIdPair = dateIdPairs[currentDateIndex];
+    currentDateIndex = (currentDateIndex + 1) % dateIdPairs.length;
+    return currentDateIdPair;
+  }
 
   while (true) {
-    for (const row of sortedRows) {
-      const { historyUpdatedAt: date, id } = row;
-      console.log(`Date: ${date}, ID: ${id}`);
+    const { date, id } = getNextDateIdPair();
+    console.log(`Date: ${date}, ID: ${id}`);
+    const sqlQuery = `CREATE TABLE IF NOT EXISTS words_user_${id} (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+     words VARCHAR(255) NOT NULL UNIQUE, 
+    number INT NOT NULL,
+    numberOfVideo INT NOT NULL
+    )`;
 
-      const sqlQuery = `CREATE TABLE IF NOT EXISTS words_user_${id} (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        words VARCHAR(255) NOT NULL UNIQUE,
-        number INT NOT NULL,
-        numberOfVideo INT NOT NULL
-      )`;
-
-      try {
-        await queryAsync(sqlQuery);
-        console.log("Table created successfully");
-      } catch (err) {
-        console.error(err);
-        return;
-      }
-
-      await openID(id);
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // 600000 ms = 10 minutes
+    try {
+      await queryAsync(sqlQuery);
+      console.log("Table created successfully");
+    } catch (err) {
+      console.error(err);
+      return;
     }
+
+    await openID(id);
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // 600000 ms = 10 minutes
   }
 }
 
@@ -49,12 +55,12 @@ async function executeFunctions(userID, statusSub) {
 
 async function openID(userID) {
   const sqlQuery = `SELECT videos_user_${userID}.id, videos_all.statusSub, videos_user_${userID}.status FROM videos_user_${userID} JOIN videos_all ON videos_user_${userID}.id = videos_all.id WHERE videos_all.statusSub IN ("subtitleSaved", "noSubtitle", "proces")`;
-
   db.query(sqlQuery, async (err, result) => {
     if (err) {
       console.log(err);
     } else {
-      for (const resObj of result) {
+      for (let i = 0; i < result.length; i++) {
+        const resObj = result[i];
         const resultId = resObj.id;
         const statusSub = resObj.statusSub;
         const userStatus = resObj.status;
@@ -63,7 +69,9 @@ async function openID(userID) {
         if (userStatus === "saveWords") {
           continue;
         }
-
+        if (userStatus === "noSubtitle") {
+          continue;
+        }
         try {
           if (statusSub === "subtitleSaved") {
             await executeFunctions(userID, resultId);
@@ -80,12 +88,17 @@ async function openID(userID) {
 
         if (newStatus) {
           const sqlQuery3 = `UPDATE videos_user_${userID} SET status = "${newStatus}" WHERE id = "${resultId}"`;
-          await queryAsync(sqlQuery3);
-          console.log(`Video ${resultId} status updated to ${newStatus}`);
+          db.query(sqlQuery3, (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(`Video ${resultId} status updated to ${newStatus}`);
+            }
+          });
         }
       }
     }
   });
 }
-//////////////
+
 main().catch((err) => console.error(err));
