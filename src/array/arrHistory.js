@@ -1,15 +1,14 @@
 const fs = require("fs");
 const path = require("path");
+const fg = require("fast-glob");
 const addHistoryYoutube = require("../addHistoryYoutube/addHistoryYoutube");
 
 let previousParam = null;
 let timeoutId = null;
 let intervalId = null;
 
-// Функція historyArray обробляє історію переглядів YouTube для вказаного користувача
 function historyArray(newParam) {
   if (previousParam !== newParam) {
-    // Очистити попередні таймаути і інтервали
     if (timeoutId) clearTimeout(timeoutId);
     if (intervalId) clearInterval(intervalId);
 
@@ -18,36 +17,58 @@ function historyArray(newParam) {
   }
 }
 
-function processFolder(param) {
+async function processFolder(param) {
   try {
     console.log(param);
 
-    // Шлях до теки з історією користувача
     const folderPath = path.join(__dirname, `../openZip/historyUsers/${param}`);
     let folderExists = false;
 
-    // Якщо тека існує
     if (fs.existsSync(folderPath)) {
       console.log(`Тека "${folderPath}" знайдена`);
-      // Завантажити дані історії переглядів із файлу JSON
-      const arr = require(path.join(
-        folderPath,
-        "/YouTube і YouTube Music/історія/історія переглядів.json"
-      ));
-      // Додати дані історії переглядів в масив arrHistory
-      const arrHistory = [...arr];
-      addHistoryYoutube(arrHistory, param);
-      console.log("Дані збережено в масиві arrHistory");
-      // Видалити теку
+
+      const searchPath = path.join(folderPath, "**/*.json");
+
+      const files = await fg(searchPath);
+
+      let found = false;
+
+      for (const file of files) {
+        if (found) {
+          break;
+        }
+
+        const data = await new Promise((resolve, reject) => {
+          fs.readFile(file, "utf8", (err, data) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data);
+            }
+          });
+        });
+
+        const jsonContent = JSON.parse(data);
+
+        if (
+          Array.isArray(jsonContent) &&
+          jsonContent.some((item) => item.hasOwnProperty("titleUrl"))
+        ) {
+          addHistoryYoutube(jsonContent, param);
+          console.log("Дані збережено в масиві arrHistory");
+          found = true;
+        }
+      }
+
       fs.rmdirSync(folderPath, { recursive: true });
       console.log(`Теку "${folderPath}" видалено`);
-      // Запустити код знову для пошуку теки через 5 секунд
+
       timeoutId = setTimeout(() => {
         processFolder(param);
       }, 5000);
     } else {
       console.log(`Теки "${folderPath}" не знайдено`);
-      // Якщо тека не існує, перевіряємо нові теки
+
       if (!folderExists) {
         intervalId = setInterval(() => {
           if (fs.existsSync(folderPath)) {
