@@ -135,17 +135,17 @@
 //   const videoID = Object.values(userObjId)[0];
 //   console.log(userObjId);
 
-// addDbUserWord(userIdResult, userID);
+//   addDbUserWord(userIdResult, userID);
 
-// const sqlQuery3 = `UPDATE videos_user_${userID} SET addWords = 1 WHERE id = "${videoID}"`;
+//   const sqlQuery3 = `UPDATE videos_user_${userID} SET addWords = 1 WHERE id = "${videoID}"`;
 
-// try {
-//   const result3 = await queryAsync(sqlQuery3);
-//   console.log(result3);
-// } catch (err) {
-//   console.error(err);
-//   return;
-// }
+//   try {
+//     const result3 = await queryAsync(sqlQuery3);
+//     console.log(result3);
+//   } catch (err) {
+//     console.error(err);
+//     return;
+//   }
 // }
 // const sqlQuery2 = `SELECT id FROM videos_user_2 WHERE addWords = 1 AND status = 'saveWords'`;
 
@@ -155,3 +155,55 @@
 //   }
 //   console.log(result);
 // });
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const util = require("util");
+const { db } = require("./model/dbConnection");
+const queryAsync = util.promisify(db.query).bind(db);
+
+const userID = 11;
+async function openID(userID) {
+  const sqlQuery = `SHOW TABLES LIKE 'videos_user_${userID}'`;
+
+  //   try {
+  //     await addFolderWordsUser(userID); // викликаємо функцію addFolderWordsUser з await
+  //     console.log("addFolderWordsUser completed successfully");
+  //   } catch (error) {
+  //     console.log("addFolderWordsUser failed with error:", error);
+  //   }
+
+  const result = await queryAsync(sqlQuery);
+
+  if (result.length === 0) {
+    console.log(`Table videos_user_${userID} not found`);
+    return;
+  }
+
+  const sqlQuery2 = `SELECT videos_user_${userID}.id FROM videos_user_${userID} JOIN videos_all ON videos_user_${userID}.id = videos_all.id WHERE videos_all.statusSub = "subtitleSaved"`;
+
+  const result2 = await queryAsync(sqlQuery2);
+
+  console.log(result2);
+
+  //   for (let i = 0; i < result2.length; i++) {
+  //     const userObjId = result2[i];
+  //     const userIdResult = Object.values(userObjId)[0];
+  //     console.log(userIdResult);
+
+  //     // await addDbUserWord(userIdResult, userID);
+
+  //     const sqlQuery3 = `UPDATE videos_user_${userID} SET proces = 1 WHERE id = "${userIdResult}"`;
+
+  //     try {
+  //       const result3 = await queryAsync(sqlQuery3);
+  //       console.log(result3);
+  //     } catch (err) {
+  //       console.error(err);
+  //       return;
+  //     }
+  //   }
+}
+
+// main().catch((err) => console.error(err));
+
+openID(userID);
+main().catch((err) => console.error(err));

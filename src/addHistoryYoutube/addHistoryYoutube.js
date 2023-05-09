@@ -77,7 +77,7 @@ function addHistoryYoutube(arrHistory, emailUser) {
     title VARCHAR(1000) NOT NULL,
     titleUrl VARCHAR(255) NOT NULL,
     timeDate DATETIME NOT NULL,
-    status ENUM('saveWords', 'noWords', 'proces') NOT NULL DEFAULT 'proces',
+    status ENUM('noSubtitles','saveWords', 'noWords', 'proces') NOT NULL DEFAULT 'proces'
   )`,
           (error, results, fields) => {
             if (error) {
