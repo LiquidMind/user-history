@@ -5,26 +5,28 @@ const addFolderWordsUser = require("./addFolderWordsUser");
 const addDbUserWord = require("./addDbUserWord");
 const queryAsync = util.promisify(db.query).bind(db);
 
-const query =
-  "SELECT id, historyUpdatedAt FROM google_test ORDER BY historyUpdatedAt ASC";
-
 async function main() {
-  const rows = await queryAsync(query);
-  const sortedRows = rows.sort(
-    (a, b) => a.historyUpdatedAt - b.historyUpdatedAt
-  );
-
   while (true) {
+    const query =
+      "SELECT id, historyUpdatedAt FROM google_users ORDER BY historyUpdatedAt ASC";
+    // Запит до бази даних для отримання користувачів.
+    const rows = await queryAsync(query);
+    const sortedRows = rows.sort(
+      (a, b) => new Date(a.historyUpdatedAt) - new Date(b.historyUpdatedAt)
+    );
+
+    // Видаліть другий цикл while тут.
+
     for (const row of sortedRows) {
       const { historyUpdatedAt: date, id } = row;
       console.log(`Date: ${date}, ID: ${id}`);
 
       const sqlQuery = `CREATE TABLE IF NOT EXISTS words_user_${id} (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        words VARCHAR(255) NOT NULL UNIQUE,
-        number INT NOT NULL,
-        numberOfVideo INT NOT NULL
-      )`;
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      words VARCHAR(255) NOT NULL UNIQUE,
+      number INT NOT NULL,
+      numberOfVideo INT NOT NULL
+    )`;
 
       try {
         await queryAsync(sqlQuery);
@@ -35,8 +37,11 @@ async function main() {
       }
 
       await openID(id);
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // 600000 ms = 10 minutes
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // 5000 ms = 5 секунд
     }
+
+    // Додайте затримку перед наступною ітерацією зовнішнього циклу.
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // 10000 ms = 10 секунд
   }
 }
 

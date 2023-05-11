@@ -1,68 +1,77 @@
 const fs = require("fs");
+const path = require("path");
+const fg = require("fast-glob");
+
+let previousFileZipName = null;
+let timeoutId = null;
+let intervalId = null;
 
 function renameZipFile(fileZipName) {
-  const nameNewFile = `${fileZipName}.zip`;
-  const folderPath =
-    "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP/";
+  if (previousFileZipName !== fileZipName) {
+    if (timeoutId) clearTimeout(timeoutId);
+    if (intervalId) clearInterval(intervalId);
 
-  function processFile() {
-    fs.readdir(folderPath, function (err, files) {
-      // Ваш код тут...
-      if (err) {
-        console.log("Помилка читання папки: " + err);
-      } else {
-        // Сортуємо файли за датою зміни
-        files.sort(function (a, b) {
-          return (
-            fs.statSync(folderPath + b).mtime.getTime() -
-            fs.statSync(folderPath + a).mtime.getTime()
-          );
-        });
-
-        // Вибираємо останній файл, пропускаючи файли з непотрібними іменами
-        let lastFile;
-        for (let i = 0; i < files.length; i++) {
-          if (files[i] !== ".DS_Store" && files[i] !== ".localized") {
-            lastFile = files[i];
-            break;
-          }
-        }
-
-        // Перейменовуємо файл, пропускаючи файли з непотрібними іменами
-        if (lastFile && lastFile !== ".DS_Store" && lastFile !== ".localized") {
-          const oldFilename = lastFile;
-          const newFilename = nameNewFile;
-          fs.rename(
-            folderPath + oldFilename,
-            folderPath + newFilename,
-            function (err) {
-              if (err) {
-                console.log("Помилка перейменування файлу: " + err);
-              } else {
-                console.log("Файл успішно перейменовано.");
-              }
-            }
-          );
-        } else {
-          console.log("Не знайдено жодного відповідного файлу.");
-        }
-      }
-    });
+    previousFileZipName = fileZipName;
+    processFolder(fileZipName);
   }
+}
 
-  // Спостерігаємо за змінами в директорії
+async function processFolder(fileZipName) {
+  try {
+    console.log(fileZipName);
 
-  fs.watch(folderPath, { persistent: true }, (eventType, filename) => {
-    if (eventType === "create") {
-      console.log(`Зміни в директорії: ${filename}`);
-      processFile();
+    const folderPath =
+      "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP/";
+
+    const nameNewFile = `${fileZipName}.zip`;
+
+    if (fs.existsSync(folderPath)) {
+      console.log(`Тека "${folderPath}" знайдена`);
+
+      const searchPath = path.join(folderPath, "*.zip");
+
+      const files = await fg(searchPath);
+
+      const lastFile = files.sort(
+        (a, b) =>
+          fs.statSync(b).mtime.getTime() - fs.statSync(a).mtime.getTime()
+      )[0];
+
+      if (lastFile) {
+        fs.rename(lastFile, path.join(folderPath, nameNewFile), (err) => {
+          if (err) {
+            console.log("Помилка перейменування файлу: " + err);
+          } else {
+            console.log("Файл успішно перейменовано.");
+          }
+        });
+      } else {
+        console.log("Не знайдено жодного відповідного файлу.");
+      }
+
+      timeoutId = setTimeout(() => {
+        processFolder(fileZipName);
+      }, 5000);
+    } else {
+      console.log(`Теки "${folderPath}" не знайдено`);
+
+      if (!intervalId) {
+        intervalId = setInterval(() => {
+          if (fs.existsSync(folderPath)) {
+            console.log("Тека з'явилася!");
+            clearInterval(intervalId);
+            intervalId = null;
+            processFolder(fileZipName);
+          } else {
+            console.log(`Теки ${fileZipName} все ще не існує`);
+          }
+        }, 3000);
+      }
     }
-  });
-
-  // Очікуємо на появу файлу
-  setInterval(() => {
-    processFile();
-  }, 5000);
+  } catch (error) {
+    console.log(`Помилка: ${error.message}`);
+    console.log("Очікуємо на новий параметр для обробки");
+  }
 }
 
 module.exports = renameZipFile;

@@ -8,6 +8,8 @@ let timeoutId = null;
 let intervalId = null;
 
 function historyArray(newParam) {
+  console.log(`ПАРАМЕТР ОЧІКУВАННЯ: ${newParam}`);
+
   if (previousParam !== newParam) {
     if (timeoutId) clearTimeout(timeoutId);
     if (intervalId) clearInterval(intervalId);
@@ -25,7 +27,7 @@ async function processFolder(param) {
     let folderExists = false;
 
     if (fs.existsSync(folderPath)) {
-      console.log(`Тека "${folderPath}" знайдена`);
+      // console.log(`Тека "${folderPath}" знайдена`);
 
       const searchPath = path.join(folderPath, "**/*.json");
 

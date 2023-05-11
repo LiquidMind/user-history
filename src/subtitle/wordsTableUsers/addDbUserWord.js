@@ -20,31 +20,14 @@ function addDbUserWord(objWord, userID) {
           console.log(err);
           reject(err);
         } else {
-          // const sqlQuery = `UPDATE videos_user_${userID} SET status = ? WHERE id = "${objWord}"`;
-          // db.query(sqlQuery, ["saveWords", objWord], (err, result) => {
-          //   if (err) {
-          //     console.log(err);
-          //     reject(err);
-          //   } else {
           console.log("УСПІШНО ДОБАВЛЕНО");
           resolve(); // розв'язуємо проміс при успішному виконанні запиту
-          //   }
-          // });
         }
       });
     }
 
-    // console.log(err);
-    // const sqlQuery = `UPDATE videos_user_${userID} SET status = ? WHERE id = "${objWord}"`;
-    // db.query(sqlQuery, ["noWords", objWord], (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //     reject(err);
-    //   } else {
     console.log(" NO WORDS");
     resolve(); // розв'язуємо проміс при успішному виконанні запиту
-    //   }
-    // });
   });
 }
 

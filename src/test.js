@@ -207,3 +207,173 @@ async function openID(userID) {
 
 openID(userID);
 main().catch((err) => console.error(err));
+
+//============================================================   OPENZIP ===================
+
+// Функція openZipFile виконує наступні дії:
+
+// Перевіряє, чи fileZipName є новим параметром, щоб уникнути повторного виконання з тим же параметром. Якщо fileZipName є новим, функція processFolder викликається з цим параметром.
+
+// У функції processFolder спочатку визначаються ряд констант, таких як шляхи до директорій, імена файлів та інші параметри.
+
+// Визначається допоміжна функція getCurrentDateString, яка повертає поточну дату і час у форматі рядка.
+
+// Визначаються функції для пошуку zip-файлу (findZipFile), розпакування zip-файлу (unzipFile), перейменування розпакованої папки (renameExtractedFolder), виконання дій при знаходженні zip-файлу (executeWhenZipFileAppears), переміщення zip-файлу (moveZipFile), створення папки, якщо вона не існує (createFolderIfNotExist) та моніторингу директорії на появу zip-файлу (monitorDirectory).
+
+// Викликається функція executeWhenZipFileAppears. Якщо zip-файл знайдено, він розпаковується, розпакована папка перейменовується, а zip-файл переміщується в іншу папку. Якщо ж файл не знайдено, запускається моніторинг директорії.
+
+// Якщо під час виконання коду виникає помилка, виводиться повідомлення про помилку та очікування нового параметра. Функція processFolder буде знову викликана з тим же параметром fileZipName через 5 секунд.
+
+// Функція openZipFile експортується для використання в інших частинах коду.
+
+// const fs = require("fs");
+// const path = require("path");
+// const AdmZip = require("adm-zip");
+
+// let previousParam = null;
+// let timeoutId = null;
+
+// function openZipFile(fileZipName) {
+//   if (previousParam !== fileZipName) {
+//     if (timeoutId) clearTimeout(timeoutId);
+
+//     previousParam = fileZipName;
+//     processFolder(fileZipName);
+//   }
+// }
+
+// async function processFolder(fileZipName) {
+//   try {
+//     const searchDir =
+//       "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP";
+//     const projectPath =
+//       "/Users/andrijkozevnikov/Documents/ProjectYoutube/user-history/src/openZip/historyUsers";
+//     const zipFileName = `${fileZipName}.zip`;
+//     const newFolderName = `${fileZipName}`;
+//     const moveToDir =
+//       "/Users/andrijkozevnikov/Documents/ProjectYoutube/Archive/zipFile_users";
+//     const waitInterval = 5000;
+
+//     function getCurrentDateString() {
+//       const date = new Date();
+
+//       const year = date.getFullYear();
+//       const month = (date.getMonth() + 1).toString().padStart(2, "0");
+//       const day = date.getDate().toString().padStart(2, "0");
+//       const hours = date.getHours().toString().padStart(2, "0");
+//       const minutes = date.getMinutes().toString().padStart(2, "0");
+//       const seconds = date.getSeconds().toString().padStart(2, "0");
+
+//       return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+//     }
+
+//     function findZipFile(directory, zipName) {
+//       const files = fs.readdirSync(directory);
+
+//       for (const file of files) {
+//         const filePath = path.join(directory, file);
+
+//         if (fs.statSync(filePath).isDirectory()) {
+//           const result = findZipFile(filePath, zipName);
+//           if (result) {
+//             return result;
+//           }
+//         } else if (file === zipName) {
+//           return filePath;
+//         }
+//       }
+
+//       return null;
+//     }
+
+//     function unzipFile(zipPath, destination) {
+//       const zip = new AdmZip(zipPath);
+//       zip.extractAllTo(destination, true);
+//     }
+
+//     function renameExtractedFolder(destination, newFolderName) {
+//       const files = fs.readdirSync(destination);
+//       const extractedFolder = files.find((file) =>
+//         fs.statSync(path.join(destination, file)).isDirectory()
+//       );
+
+//       if (extractedFolder) {
+//         const oldFolderPath = path.join(destination, extractedFolder);
+//         const newFolderPath = path.join(destination, newFolderName);
+
+//         fs.renameSync(oldFolderPath, newFolderPath);
+//         console.log(`Extracted folder renamed to: ${newFolderPath}`);
+//       } else {
+//         console.log("No folder found to rename.");
+//       }
+//     }
+
+//     function executeWhenZipFileAppears() {
+//       const zipPath = findZipFile(searchDir, zipFileName);
+
+//       if (zipPath) {
+//         console.log(`Found zip file at: ${zipPath}`);
+//         unzipFile(zipPath, projectPath);
+//         renameExtractedFolder(projectPath, newFolderName);
+//         moveZipFile(zipPath, moveToDir);
+//         console.log(`Zip file extracted to: ${projectPath}`);
+//         return true;
+//       } else {
+//         console.log(
+//           `Zip file '${zipFileName}' not found in the specified
+// directory.`
+//         );
+//         return false;
+//       }
+//     }
+
+//     function moveZipFile(zipPath, destination) {
+//       createFolderIfNotExist(destination, newFolderName);
+//       const currentDate = getCurrentDateString();
+//       const destinationPath = path.join(
+//         destination,
+//         newFolderName,
+//         `${path.basename(zipPath, ".zip")}_${currentDate}.zip`
+//       );
+//       fs.renameSync(zipPath, destinationPath);
+//       console.log(`Zip file moved to: ${destinationPath}`);
+//     }
+
+//     function createFolderIfNotExist(destination, folderName) {
+//       const folderPath = path.join(destination, folderName);
+//       if (!fs.existsSync(folderPath)) {
+//         fs.mkdirSync(folderPath);
+//         console.log(`Folder created: ${folderPath}`);
+//       }
+//     }
+
+//     function monitorDirectory(directory, zipName) {
+//       console.log(
+//         `Monitoring directory '${directory}' for the appearance of '${zipName}'.`
+//       );
+
+//       const watcher = fs.watch(
+//         directory,
+//         { recursive: true },
+//         (eventType, filename) => {
+//           if (filename === zipName) {
+//             watcher.close();
+//             executeWhenZipFileAppears();
+//           }
+//         }
+//       );
+//     }
+
+//     if (!executeWhenZipFileAppears()) {
+//       monitorDirectory(searchDir, zipFileName);
+//     }
+//   } catch (error) {
+//     console.log(`Error: ${error.message}`);
+//     console.log("Waiting for a new parameter to process");
+//     timeoutId = setTimeout(() => {
+//       processFolder(fileZipName);
+//     }, 5000);
+//   }
+// }
+
+// module.exports = openZipFile;

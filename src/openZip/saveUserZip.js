@@ -59,18 +59,17 @@ async function downloadGoogleData(email, password) {
   // // await page.keyboard.press("Enter", { delay: 1000 });
 
   // ==============================================================================================
-
-  await page.goto("https://takeout.google.com/");
-
-  // Вводимо емейл
-
-  await page.type("#identifierId", email);
-
-  //Натискаємо далі
-  await page.click("#identifierNext");
-  await page.waitForNavigation({ timeout: 600000 });
-
   try {
+    await page.goto("https://takeout.google.com/");
+
+    // Вводимо емейл
+
+    await page.type("#identifierId", email);
+
+    //Натискаємо далі
+    await page.click("#identifierNext");
+    await page.waitForNavigation({ timeout: 60000 });
+
     //Вводимо пароль
     // Wait for the password input field to become visible
 
@@ -225,7 +224,7 @@ async function downloadGoogleData(email, password) {
     }
 
     await page.click(downloadButtonSelector);
-    await page.waitForNavigation({ timeout: 600000 });
+    await page.waitForNavigation({ timeout: 60000 });
   } catch (error) {
     console.log(error);
   }
