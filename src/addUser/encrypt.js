@@ -28,20 +28,29 @@ if (email.length && password.length) {
 const encryptedText = encrypt(password, SECRETPAS);
 console.log(encryptedText); // Виведе рядок, що складається з iv, encrypted та tag, розділених двокрапкою
 
-const sqlQuery = `INSERT INTO google_users (google_email, google_password) VALUE (?,?)`;
-db.query(sqlQuery, [email, encryptedText], (err, result) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(result);
-  }
-  db.end();
-});
-
-// const sqlQuery2 = `UPDATE google_test SET google_password = '${encryptedText}' WHERE google_email = '${email}'`;
-// db.query(sqlQuery2, (err, result) => {
+// const sqlQuery = `INSERT INTO google_test (google_email, google_password) VALUE (?,?)`;
+// db.query(sqlQuery, [email, encryptedText], (err, result) => {
 //   if (err) {
 //     console.log(err);
+//   } else {
+//     console.log(result);
 //   }
-//   console.log(`login user ${email} update`);
+//   db.end();
 // });
+
+const sqlQuery2 = `UPDATE google_test SET google_password = '${encryptedText}' WHERE google_email = '${email}'`;
+db.query(sqlQuery2, (err, result) => {
+  if (err) {
+    console.log(err);
+  }
+  console.log(`login user ${email} update`);
+  const sqlQuery2 = `UPDATE google_test SET status_channel = 0 WHERE google_email = '${email}'`;
+  db.query(sqlQuery2, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(
+      `Канал користувачу ${email}не створено не правильний пароль або емейл`
+    );
+  });
+});

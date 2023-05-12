@@ -15,6 +15,7 @@
     "updateHistory": "nodemon ./src/updateHistory/updateHistory.js",
     "userTable": "nodemon ./src/subtitle/wordsTableUsers/userTable",
     "createUser": "nodemon ./src/addUser/encrypt.js",
+    "createChannel": "nodemon ./src/createChannel/addDbChannel.js",
     "server": "nodemon ./src/api/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.5.10",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
@@ -36,6 +38,7 @@
     "jsonwebtoken": "^9.0.0",
     "langdetect": "^0.2.1",
     "lemmatizer": "^0.0.1",
+    "lien": "^3.4.2",
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "mysql2": "^3.1.2",
@@ -43,12 +46,14 @@
     "nlp_compromise": "^7.0.0",
     "node-nlp": "^4.26.1",
     "nodemon": "^2.0.22",
+    "opn": "^6.0.0",
     "path": "^0.12.7",
     "puppeteer-core": "^19.11.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "python-shell": "^5.0.0",
     "robotjs": "^0.6.0",
+    "server-destroy": "^1.0.1",
     "subtitle-converter": "^3.0.12",
     "youtube-dl-exec": "^2.3.1",
     "ytdl-core": "^4.11.4"
