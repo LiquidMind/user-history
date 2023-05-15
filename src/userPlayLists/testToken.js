@@ -4,6 +4,7 @@ const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const tokenClient = require(".//testCreatPlaylist");
 
 const SCOPES = [
   "https://www.googleapis.com/auth/youtube",
@@ -25,19 +26,13 @@ function getNewToken(oauth2Client, callback) {
     scope: SCOPES,
   });
   console.log("Authorize this app by visiting this url: ", authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  ////////////////////////////////////
 
-  puppeteer.use(StealthPlugin());
-
-  (async () => {
+  const getPuppeteerCode = async () => {
+    puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
       headless: false,
       executablePath:
-        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // шлях до встановленого Chrome
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     });
     const page = await browser.newPage();
     await page.setUserAgent(
@@ -66,33 +61,36 @@ function getNewToken(oauth2Client, callback) {
     // Wait for navigation after clicking "Next"
     await page.waitForNavigation({ timeout: 60000 });
 
-    // Отримати URL-адресу з поточної сторінки
+    // Get URL from the current page
     const currentUrl = await page.evaluate(() => window.location.href);
     const input = currentUrl;
 
     const regex = /(4%2F[^&]*)/;
     const matches = input.match(regex);
     if (matches && matches.length > 0) {
-      const result = matches[1];
-      console.log(result);
+      return matches[1];
     }
-  })();
+    return null;
+  };
 
-  rl.question("Enter the code from that page here: ", function (encodedCode) {
-    rl.close();
-
-    const code = decodeURIComponent(encodedCode);
-    oauth2Client.getToken(code, function (err, token) {
-      if (err) {
-        console.log("Error while trying to retrieve access token", err);
-        return;
-      }
-      oauth2Client.credentials = token;
-      storeToken(token);
-      callback(oauth2Client);
-    });
+  getPuppeteerCode().then((encodedCode) => {
+    if (encodedCode) {
+      const code = decodeURIComponent(encodedCode);
+      oauth2Client.getToken(code, function (err, token) {
+        if (err) {
+          console.log("Error while trying to retrieve access token", err);
+          return;
+        }
+        oauth2Client.credentials = token;
+        storeToken(token);
+        callback(oauth2Client);
+      });
+    } else {
+      console.log("Could not retrieve code from Puppeteer");
+    }
   });
 }
+
 ////////////////////////////////////
 function storeToken(token) {
   try {
@@ -130,10 +128,12 @@ function authorize(credentials) {
     if (err) {
       getNewToken(oauth2Client, (auth) => {
         console.log("Authorization complete. Token:", auth.credentials);
+        tokenClient(oauth2Client.credentials);
       });
     } else {
       oauth2Client.credentials = JSON.parse(token);
-      console.log("Authorization complete. Token:", oauth2Client.credentials);
+      tokenClient(oauth2Client.credentials);
+      // console.log("Authorization complete. Token:", oauth2Client.credentials);
     }
   });
 }

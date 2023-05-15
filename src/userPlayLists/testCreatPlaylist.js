@@ -1,7 +1,20 @@
-const fs = require("fs");
-const readline = require("readline");
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
+
+function tokenClient(token) {
+  const { access_token, refresh_token, token_type, expiry_date } = token;
+
+  console.log(access_token, refresh_token, token_type, expiry_date);
+
+  const oauth2Client = new OAuth2();
+  oauth2Client.setCredentials({
+    access_token: access_token,
+    refresh_token: refresh_token,
+    token_type: token_type,
+    expiry_date: expiry_date,
+  });
+  createPlaylist(oauth2Client);
+}
 
 function createPlaylist(auth) {
   const service = google.youtube("v3");
@@ -11,7 +24,7 @@ function createPlaylist(auth) {
       part: "snippet,status",
       requestBody: {
         snippet: {
-          title: "TEST_PLAYLIST",
+          title: "NEW PLAYLIST",
           description: "This is a test playlist created by the YouTube API v3",
         },
         status: {
@@ -26,10 +39,11 @@ function createPlaylist(auth) {
       }
 
       console.log("Created playlist with id: " + response.data.id);
-      addVideoToPlaylist(auth, response.data.id, "M0ICeuJ4Vns");
+      addVideoToPlaylist(auth, response.data.id, "r13frEJgZcM");
     }
   );
 }
+
 function addVideoToPlaylist(auth, playlistId, videoId) {
   const service = google.youtube("v3");
   service.playlistItems.insert(
@@ -48,8 +62,7 @@ function addVideoToPlaylist(auth, playlistId, videoId) {
     },
     function (err, response) {
       if (err) {
-        console.log("TaddVideoToPlaylis: the API returned an error: " + err);
-
+        console.log("addVideoToPlaylist: the API returned an error: " + err);
         return;
       }
 
@@ -58,4 +71,4 @@ function addVideoToPlaylist(auth, playlistId, videoId) {
   );
 }
 
-// createPlaylist();
+module.exports = tokenClient;
