@@ -16,7 +16,7 @@ const SCOPES = [
 const TOKEN_DIR =
   (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) +
   "/.credentials/";
-const TOKEN_PATH = TOKEN_DIR + "youtube-nodejs-quickstart.json";
+const TOKEN_PATH = TOKEN_DIR + ".youtube-nodejs-quickstart.json";
 
 function getNewToken(oauth2Client, callback) {
   const authUrl = oauth2Client.generateAuthUrl({
@@ -28,8 +28,9 @@ function getNewToken(oauth2Client, callback) {
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question("Enter the code from that page here: ", function (code) {
+  rl.question("Enter the code from that page here: ", function (encodedCode) {
     rl.close();
+    const code = decodeURIComponent(encodedCode);
     oauth2Client.getToken(code, function (err, token) {
       if (err) {
         console.log("Error while trying to retrieve access token", err);
@@ -92,7 +93,7 @@ function createPlaylist(auth) {
       part: "snippet,status",
       requestBody: {
         snippet: {
-          title: "TEST_PLAYLIST",
+          title: "TEST",
           description: "This is a test playlist created by the YouTube API v3",
         },
         status: {
@@ -139,3 +140,17 @@ function addVideoToPlaylist(auth, playlistId, videoId) {
     }
   );
 }
+
+// В этом коде:
+
+// 1. Библиотеки `fs`, `readline` и `googleapis` импортируются из соответствующих модулей.
+// 2. `SCOPES` содержит список областей доступа для YouTube API.
+// 3. `TOKEN_DIR` и `TOKEN_PATH` указывают на директорию и путь для сохранения файла с токеном авторизации.
+// 4. `getNewToken` - функция для получения нового токена авторизации с помощью интерфейса командной строки.
+// 5. `storeToken` - функция для сохранения токена в файл.
+// 6. `fs.readFile` - чтение файла с клиентскими секретами и вызов функции `authorize` для авторизации приложения.
+// 7. `authorize` - функция для авторизации приложения с использованием клиентских секретов и токена авторизации.
+// 8. `createPlaylist` - функция для создания нового плейлиста на YouTube с помощью YouTube API. Затем вызывается функция `addVideoToPlaylist` для добавления видео в созданный плейлист.
+// 9. `addVideoToPlaylist` - функция для добавления видео в плейлист на YouTube.
+
+// Пожалуйста, обратите внимание, что для корректной работы этого кода необходимо иметь файл `client_secret.json`, содержащий секреты вашего приложения, а также настроенные права доступа для YouTube API.
