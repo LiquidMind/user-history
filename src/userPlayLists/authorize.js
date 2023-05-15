@@ -4,7 +4,7 @@ const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const tokenClient = require(".//testCreatPlaylist");
+const tokenClient = require("./createAndUpdate/tokenClient");
 
 const SCOPES = [
   "https://www.googleapis.com/auth/youtube",
