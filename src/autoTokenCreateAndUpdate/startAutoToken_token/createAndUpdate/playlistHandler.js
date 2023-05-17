@@ -29,7 +29,7 @@ function getOrCreatePlaylist(auth) {
           SELECT videos_user_3.id FROM videos_user_3
         )
         ORDER BY videos_all.viewes DESC
-        LIMIT 6;
+        LIMIT 10;
       `;
 
       db.query(sqlQuery, (err, result) => {

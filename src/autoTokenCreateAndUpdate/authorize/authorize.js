@@ -3,11 +3,11 @@ const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const { SCOPES, TOKEN_DIR, TOKEN_PATH } = require("./config");
 const { getNewToken } = require("./token");
-const tokenClient = require("./createAndUpdate/tokenClient");
-const { executeRequestWithAutoRetry } = require("./token");
+const tokenClient = require("../startAutoToken_token/createAndUpdate/tokenClient");
+// const { executeRequestWithAutoRetry } = require("./token");
 
 fs.readFile(
-  "./src/userPlayLists/client_secret.json",
+  "./src/autoTokenCreateAndUpdate/client_secret.json",
   function processClientSecrets(err, content) {
     if (err) {
       console.log("Error loading client secret file: " + err);
