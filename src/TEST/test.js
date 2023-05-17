@@ -157,7 +157,7 @@
 // });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const util = require("util");
-const { db } = require("./model/dbConnection");
+const { db } = require("../model/dbConnection");
 const queryAsync = util.promisify(db.query).bind(db);
 
 const userID = 11;
@@ -377,3 +377,37 @@ main().catch((err) => console.error(err));
 // }
 
 // module.exports = openZipFile;
+
+// const sqlQuery = `SELECT va.id, va.lengthVideo
+//         FROM videos_all AS va
+//         WHERE va.id IN (SELECT vu.id FROM videos_user_6 AS vu)
+//         ORDER BY va.lengthVideo DESC
+//         LIMIT 50;
+//         `;
+
+// db.query(sqlQuery, (err, result) => {
+//   const videoId = [];
+//   if (err) {
+//     console.log(err);
+//   }
+//   for (let i = 0; i < result.length; i++) {
+//     const resObj = result[i];
+//     const resID = Object.values(resObj)[0];
+//     videoId.push(resID);
+//   }
+
+//   console.log(videoId);
+// });
+
+// function main() {
+//   return new Promise((resolve, reject) => {
+//     const encodedCode =
+//       "4%2F0AbUR2VMc6chMxKvMSEeoPveJvgHcmrdveyepTfeg6ixQ--V8-6DhOymgPypKrGwfVuiMFg";
+//     const code = decodeURIComponent(encodedCode);
+
+//     console.log(code);
+//     resolve(); // або reject() у разі помилки
+//   });
+// }
+
+// main().catch((err) => console.error(err));
