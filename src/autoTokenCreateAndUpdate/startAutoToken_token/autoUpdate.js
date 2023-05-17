@@ -60,13 +60,16 @@ function storeToken(token) {
   console.log("Token stored to " + TOKEN_PATH);
 }
 
-fs.readFile("./src/userPlayLists/client_secret.json", (err, content) => {
-  if (err) {
-    console.log("Error loading client secret file: " + err);
-    return;
+fs.readFile(
+  "./src/autoTokenCreateAndUpdate/client_secret.json",
+  (err, content) => {
+    if (err) {
+      console.log("Error loading client secret file: " + err);
+      return;
+    }
+    authorize(JSON.parse(content));
   }
-  authorize(JSON.parse(content));
-});
+);
 
 function authorize(credentials) {
   const clientSecret = credentials.installed.client_secret;
