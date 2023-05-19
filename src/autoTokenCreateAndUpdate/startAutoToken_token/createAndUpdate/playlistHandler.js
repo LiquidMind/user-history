@@ -18,18 +18,22 @@ function getOrCreatePlaylist(auth) {
         return;
       }
 
+      const playlistName = "Top length";
+
       const playlists = response.data.items;
-      const playlist = playlists.find((p) => p.snippet.title === "Top Views");
+      const playlist = playlists.find(
+        (p) => p.snippet.title === `${playlistName}`
+      );
 
       console.log(!!playlist);
 
-      const sqlQuery = `SELECT videos_all.id, videos_all.viewes
+      const sqlQuery = `SELECT videos_all.id, videos_all.lengthVideo
         FROM videos_all
         WHERE videos_all.id IN (
           SELECT videos_user_3.id FROM videos_user_3
         )
-        ORDER BY videos_all.viewes DESC
-        LIMIT 10;
+        ORDER BY videos_all.lengthVideo DESC
+        LIMIT 5;
       `;
 
       db.query(sqlQuery, (err, result) => {
@@ -51,7 +55,7 @@ function getOrCreatePlaylist(auth) {
               console.log("Error adding videos to playlist: " + err);
             });
         } else {
-          createPlaylist(auth, videoIds)
+          createPlaylist(auth, videoIds, playlistName)
             .then(() => {
               console.log("Created playlist and added videos.");
             })

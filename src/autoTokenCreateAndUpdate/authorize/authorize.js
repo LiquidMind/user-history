@@ -1,30 +1,30 @@
 const fs = require("fs");
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
-const { SCOPES, TOKEN_DIR, TOKEN_PATH } = require("./config");
+const { SCOPES, TOKEN_DIR } = require("./config");
 const { getNewToken } = require("./token");
-const tokenClient = require("../startAutoToken_token/createAndUpdate/tokenClient");
-// const { executeRequestWithAutoRetry } = require("./token");
+const crypto = require("crypto");
+require("dotenv").config();
+const { SECRETPAS } = process.env;
+const { db } = require("../../model/dbConnection");
 
 fs.readFile(
   "./src/autoTokenCreateAndUpdate/client_secret.json",
-  function processClientSecrets(err, content) {
+  (err, content) => {
     if (err) {
-      console.log("Error loading client secret file: " + err);
-      return;
+      console.error("Error loading client secret file:", err);
+    } else {
+      try {
+        const oauth2Client = authorize(JSON.parse(content));
+        setInterval(() => {
+          checkTokens(oauth2Client);
+        }, 30000);
+      } catch (parseErr) {
+        console.error("Error parsing client secret file:", parseErr);
+      }
     }
-    authorize(JSON.parse(content));
   }
 );
-
-// Функція для перевірки, чи токен скоро застаріє.
-function isTokenExpiring(token) {
-  // Застарілий токен визначається як токен, який закінчується менше ніж за 5 хвилин.
-  const EXPIRATION_WINDOW_IN_SECONDS = 300;
-  const now = new Date().getTime();
-  // expiry_date в токені задається у мілісекундах.
-  return token.expiry_date - now <= EXPIRATION_WINDOW_IN_SECONDS * 1000;
-}
 
 function authorize(credentials) {
   const clientSecret = credentials.installed.client_secret;
@@ -32,27 +32,79 @@ function authorize(credentials) {
   const redirectUrl = credentials.installed.redirect_uris[0];
   const oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
-  fs.readFile(TOKEN_PATH, function (err, token) {
+  return oauth2Client;
+}
+
+function checkTokens(oauth2Client) {
+  const sqlQuery = `SELECT google_email, google_password, historyUpdatedAt FROM google_test WHERE saveToken = 0 ORDER BY historyUpdatedAt ASC`;
+
+  db.query(sqlQuery, (err, result) => {
     if (err) {
-      // Якщо ми не можемо прочитати токен, ми отримуємо новий
-      getNewToken(oauth2Client, (auth) => {
-        console.log("Authorization complete. Token:", auth.credentials);
-        tokenClient(oauth2Client.credentials);
-      });
+      console.error("Error executing SQL query:", err);
     } else {
-      oauth2Client.credentials = JSON.parse(token);
-      if (isTokenExpiring(oauth2Client.credentials)) {
-        // Якщо токен скоро застаріє, ми отримуємо новий
-        getNewToken(oauth2Client, (auth) => {
-          console.log("Authorization complete. Token:", auth.credentials);
-          tokenClient(oauth2Client.credentials);
-        });
-      } else {
-        // Якщо токен ще дійсний, ми використовуємо його
-        tokenClient(oauth2Client.credentials);
-      }
+      result.forEach((resObj) => {
+        processEmailPassword(resObj, oauth2Client);
+      });
     }
   });
+}
+
+function processEmailPassword(resObj, oauth2Client) {
+  const email = resObj.google_email;
+  let password = resObj.google_password;
+  const TOKEN_PATH = TOKEN_DIR + `${email}.json`;
+
+  if (password === "noPassword") {
+    return;
+  }
+
+  fs.readFile(TOKEN_PATH, (err) => {
+    if (err) {
+      try {
+        decryptPlaylist(email, password.trim(), oauth2Client);
+      } catch (decryptErr) {
+        console.error("Error decrypting playlist:", decryptErr);
+      }
+    }
+
+    const updateQuery = `UPDATE google_test SET saveToken = 1 WHERE google_email = '${email}'`;
+
+    db.query(updateQuery, (err, res) => {
+      if (err) {
+        console.error("Error updating saveToken:", err);
+      }
+      console.log("Token already exists. No action taken.");
+    });
+  });
+}
+
+function decryptPlaylist(email, encryptedText, oauth2Client) {
+  const [ivText, encryptedTextOnly, tagText] = encryptedText.split(":");
+  const iv = Buffer.from(ivText, "hex");
+  const key = crypto.scryptSync(SECRETPAS, "salt", 32);
+  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+
+  decipher.setAuthTag(Buffer.from(tagText, "hex"));
+
+  let decrypted = decipher.update(encryptedTextOnly, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  console.log(email, decrypted);
+
+  getNewToken(
+    oauth2Client,
+    (auth) => {
+      console.log("Authorization complete. Token:", auth.credentials);
+      const updateQuery = `UPDATE google_test SET saveToken = 1 WHERE google_email = '${email}'`;
+
+      db.query(updateQuery, (err, res) => {
+        if (err) {
+          console.error("Error updating saveToken:", err);
+        }
+      });
+    },
+    email,
+    decrypted
+  );
 }
 
 module.exports = { authorize };

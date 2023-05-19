@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 const addVideoToPlaylist = require("./addVideoToPlaylist");
 
-async function createPlaylist(auth, videoIds) {
+async function createPlaylist(auth, videoIds, playlistName) {
   const service = google.youtube("v3");
 
   try {
@@ -10,7 +10,7 @@ async function createPlaylist(auth, videoIds) {
       part: "snippet,status",
       requestBody: {
         snippet: {
-          title: "Top Views",
+          title: playlistName,
           description: "This is a test playlist created by the YouTube API v3",
         },
         status: {

@@ -11,7 +11,8 @@ const SCOPES = [
 ];
 const TOKEN_DIR =
   (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) +
-  "/.credentials/";
-const TOKEN_PATH = TOKEN_DIR + "max190716@gmail.com.json";
+  "/Documents/ProjectYoutube/Archive/usersTokens/";
+// const TOKEN_PATH = TOKEN_DIR + "maysksksks32@gmail.com.json";
 
-module.exports = { SCOPES, TOKEN_DIR, TOKEN_PATH };
+// module.exports = { SCOPES, TOKEN_DIR, TOKEN_PATH };
+module.exports = { SCOPES, TOKEN_DIR };
