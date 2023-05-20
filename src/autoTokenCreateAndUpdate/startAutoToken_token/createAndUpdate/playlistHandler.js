@@ -3,7 +3,7 @@ const createPlaylist = require("./createPlaylist");
 const addVideoToPlaylist = require("./addVideoToPlaylist");
 const { db } = require("../../../model/dbConnection");
 
-function getOrCreatePlaylist(auth) {
+function getOrCreatePlaylist(auth, resId) {
   const service = google.youtube("v3");
 
   service.playlists.list(
@@ -18,7 +18,9 @@ function getOrCreatePlaylist(auth) {
         return;
       }
 
-      const playlistName = "Top length";
+      //// ПОВИНЕНІ ПРИЙТИ ДАНІ СТВОРЕНОГО МАСИВУ ОБЄКТІВ ЯКІ БУДЕ ВПИСУВАТИ ТА КОЖНИМ ЦИКЛОМ СТВОРЮВАТИ НОВИЙЦ ПЛЕЙЛІСТ ПО ОБЄКТАХ
+
+      const playlistName = "Top Viewes";
 
       const playlists = response.data.items;
       const playlist = playlists.find(
@@ -26,15 +28,25 @@ function getOrCreatePlaylist(auth) {
       );
 
       console.log(!!playlist);
+      console.log(`ID_USER: ${resId}`);
 
-      const sqlQuery = `SELECT videos_all.id, videos_all.lengthVideo
+      const sqlQuery = `SELECT videos_all.id, videos_all.viewes
         FROM videos_all
         WHERE videos_all.id IN (
-          SELECT videos_user_3.id FROM videos_user_3
+          SELECT videos_user_${resId}.id FROM videos_user_${resId}
         )
-        ORDER BY videos_all.lengthVideo DESC
+        ORDER BY videos_all.viewes DESC
         LIMIT 5;
       `;
+      //       const sqlQuery = `SELECT videos_all.id, videos_all.lengthVideo
+      //   FROM videos_all
+      //   WHERE videos_all.id IN (
+      //     SELECT videos_user_${resId}.id FROM videos_user_${resId}
+      //   )
+      //   AND videos_all.language = 'ua'
+      //   ORDER BY videos_all.lengthVideo DESC
+      //   LIMIT 5;
+      // `;
 
       db.query(sqlQuery, (err, result) => {
         if (err) {

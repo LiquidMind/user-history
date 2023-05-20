@@ -1,0 +1,12 @@
+[
+  {
+    "namePlaylist": "Top Viewes",
+    "nameColumn": "viewes",
+    "description": "viewes"
+  },
+  {
+    "namePlaylist": "Top Length",
+    "nameColumn": "lengthVideo",
+    "description": "length"
+  }
+]

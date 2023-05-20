@@ -160,70 +160,70 @@ const getPuppeteerCode = async (authUrl, email, password) => {
       );
       if (nextButton) nextButton.click();
     });
-    await page.waitForSelector(
-      'div[jsname="QkNstf"] div[jsname="eBSUOb"] button'
-    );
-    await page.click('div[jsname="QkNstf"] div[jsname="eBSUOb"] button');
+    // await page.waitForSelector(
+    //   'div[jsname="QkNstf"] div[jsname="eBSUOb"] button'
+    // );
+    // await page.click('div[jsname="QkNstf"] div[jsname="eBSUOb"] button');
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni1"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni1"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni1"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni1"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni2"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni2"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni2"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni2"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni3"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni3"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni3"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni3"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni4"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni4"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni4"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni4"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni5"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni5"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni5"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni5"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni6"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni6"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni6"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni6"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector(
-      'input[type="checkbox"][aria-labelledby="selectioni7"]'
-    );
-    await page.$eval(
-      'input[type="checkbox"][aria-labelledby="selectioni7"]',
-      (checkbox) => (checkbox.checked = true)
-    );
+    // await page.waitForSelector(
+    //   'input[type="checkbox"][aria-labelledby="selectioni7"]'
+    // );
+    // await page.$eval(
+    //   'input[type="checkbox"][aria-labelledby="selectioni7"]',
+    //   (checkbox) => (checkbox.checked = true)
+    // );
 
-    await page.waitForSelector('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
-    await page.waitForTimeout(2000); // Затримка 2000 мс (2 секунди)
-    await page.click('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
+    // await page.waitForSelector('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
+    // await page.waitForTimeout(2000); // Затримка 2000 мс (2 секунди)
+    // await page.click('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
     // Wait for navigation after clicking "Next"
     await page.waitForNavigation({ timeout: 10000 });
 
