@@ -11,7 +11,8 @@ async function createPlaylist(auth, videoIds, playlistName) {
       requestBody: {
         snippet: {
           title: playlistName,
-          description: "This is a test playlist created by the YouTube API v3",
+          description:
+            "This playlist displays your all-time watched videos by length",
         },
         status: {
           privacyStatus: "private",
