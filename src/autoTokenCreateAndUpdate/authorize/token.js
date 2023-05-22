@@ -49,7 +49,7 @@ async function getNewToken(oauth2Client, callback, email, password) {
     }
   } catch (err) {
     db.query(
-      `UPDATE google_test SET saveToken = 1 WHERE google_email = '${email}'`,
+      `UPDATE google_test SET saveToken = 3 WHERE google_email = '${email}'`,
       (err, res) => {
         if (err) {
           console.error("Error updating saveToken:", err);

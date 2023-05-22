@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 const addVideoToPlaylist = require("./addVideoToPlaylist");
 
-async function createPlaylist(auth, videoIds, playlistName) {
+async function createPlaylist(auth, videoIds, playlistName, description) {
   const service = google.youtube("v3");
 
   try {
@@ -11,8 +11,7 @@ async function createPlaylist(auth, videoIds, playlistName) {
       requestBody: {
         snippet: {
           title: playlistName,
-          description:
-            "This playlist displays your all-time watched videos by length",
+          description: `This playlist displays your all-time watched videos by ${description}`,
         },
         status: {
           privacyStatus: "private",

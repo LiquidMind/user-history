@@ -36,7 +36,7 @@ function authorize(credentials) {
 }
 
 function checkTokens(oauth2Client) {
-  const sqlQuery = `SELECT google_email, google_password, historyUpdatedAt FROM google_test WHERE saveToken = 0 ORDER BY historyUpdatedAt ASC`;
+  const sqlQuery = `SELECT google_email, google_password, historyUpdatedAt FROM google_test WHERE saveToken = 0 AND saveToken = 3 ORDER BY historyUpdatedAt ASC`;
 
   db.query(sqlQuery, (err, result) => {
     if (err) {
