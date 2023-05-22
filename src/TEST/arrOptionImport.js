@@ -24,7 +24,6 @@ function getOrCreatePlaylist(auth, resId) {
         const resObj = arrOptionPlaylist[i];
 
         const playlistName = resObj.namePlaylist;
-        const description = resObj.description;
 
         const playlists = response.data.items;
         const playlist = playlists.find(
@@ -62,18 +61,13 @@ function getOrCreatePlaylist(auth, resId) {
             await addVideoToPlaylist(auth, playlist.id, videoIds);
             console.log("Added videos to playlist.");
           } else {
-            await createPlaylist(auth, videoIds, playlistName, description);
+            await createPlaylist(auth, videoIds, playlistName);
             console.log("Created playlist and added videos.");
           }
         } catch (error) {
           console.log(error);
         }
       }
-
-      // Додайте ваш код після завершення циклу
-      // тут продовжується виконання інших дій після завершення циклу
     }
   );
 }
-
-module.exports = getOrCreatePlaylist;

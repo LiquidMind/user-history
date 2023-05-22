@@ -241,6 +241,7 @@ const getPuppeteerCode = async (authUrl, email, password) => {
 
     if (match && match[1]) {
       const codeValue = match[1];
+      console.log(codeValue);
       return codeValue;
     } else {
       console.log("Code not found in URL");
