@@ -1,8 +1,10 @@
 const axios = require("axios");
 const util = require("util");
 const { db } = require("../../model/dbConnection");
-require("dotenv").config();
-const { KEY331 } = process.env;
+const keys = require("../../../data.json");
+
+// These are your API keys.
+const apiKeys = keys;
 
 const asyncQuery = util.promisify(db.query).bind(db);
 
@@ -21,7 +23,7 @@ async function processChannel(element) {
 
   let videoIds = [];
   let nextPageToken = "";
-  let apiKey = KEY331;
+  let apiKeyIndex = 0;
 
   while (nextPageToken != undefined) {
     try {
@@ -29,7 +31,7 @@ async function processChannel(element) {
         `https://www.googleapis.com/youtube/v3/search`,
         {
           params: {
-            key: apiKey,
+            key: apiKeys[apiKeyIndex],
             channelId: channelId,
             part: "id",
             order: "date",
@@ -49,17 +51,15 @@ async function processChannel(element) {
     } catch (error) {
       console.error(error);
 
-      // If KEY32 fails, use KEY33 instead
-      // if (apiKey === KEY32) {
-      //   apiKey = KEY33;
-      //   continue;
-      // } else {
-      //   throw error;
-      // }
+      if (apiKeyIndex < apiKeys.length - 1) {
+        apiKeyIndex++;
+        continue;
+      } else {
+        throw error;
+      }
     }
   }
 
-  // Insert video IDs into 'cartoon' table
   const insertQuery = `INSERT INTO cartoon (id, channelId, channeTitle) VALUES ? ON DUPLICATE KEY UPDATE id=id`;
   const insertValues = videoIds.map((videoId) => [
     videoId,
@@ -69,7 +69,6 @@ async function processChannel(element) {
 
   await executeQuery(insertQuery, [insertValues]);
 
-  // Update 'numberСartoons' in 'channel' table
   const updateQuery = `UPDATE channel SET numberOfVideos = ? WHERE channelId = ?`;
   await executeQuery(updateQuery, [videoIds.length, channelId]);
 
@@ -84,11 +83,9 @@ async function main() {
 
     for (let element of channels) {
       await processChannel(element);
-      // Wait 5 seconds before the next iteration
       await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
-    // Wait 10 seconds before checking the database again
     await new Promise((resolve) => setTimeout(resolve, 10000));
   }
 }
