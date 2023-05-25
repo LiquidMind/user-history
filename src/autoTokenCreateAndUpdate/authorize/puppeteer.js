@@ -160,92 +160,119 @@ const getPuppeteerCode = async (authUrl, email, password) => {
       );
       if (nextButton) nextButton.click();
     });
-    // await page.waitForSelector(
-    //   'div[jsname="QkNstf"] div[jsname="eBSUOb"] button'
-    // );
-    // await page.click('div[jsname="QkNstf"] div[jsname="eBSUOb"] button');
+    try {
+      await page.waitForSelector(
+        'div[jsname="QkNstf"] div[jsname="eBSUOb"] button'
+      );
+      await page.click('div[jsname="QkNstf"] div[jsname="eBSUOb"] button');
+    } catch (error) {
+      console.log(error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni1"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni1"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni1"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni1"]');
+    } catch (error) {
+      console.error("Error occurred in block 1:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni2"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni2"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni2"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni2"]');
+    } catch (error) {
+      console.error("Error occurred in block 2:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni3"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni3"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni3"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni3"]');
+    } catch (error) {
+      console.error("Error occurred in block 3:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni4"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni4"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni4"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni4"]');
+    } catch (error) {
+      console.error("Error occurred in block 4:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni5"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni5"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni5"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni5"]');
+    } catch (error) {
+      console.error("Error occurred in block 5:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni6"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni6"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni6"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni6"]');
+    } catch (error) {
+      console.error("Error occurred in block 6:", error);
+    }
 
-    // await page.waitForSelector(
-    //   'input[type="checkbox"][aria-labelledby="selectioni7"]'
-    // );
-    // await page.$eval(
-    //   'input[type="checkbox"][aria-labelledby="selectioni7"]',
-    //   (checkbox) => (checkbox.checked = true)
-    // );
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni7"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni7"]');
+    } catch (error) {
+      console.error("Error occurred in block 7:", error);
+    }
 
-    // await page.waitForSelector('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
-    // await page.waitForTimeout(2000); // Затримка 2000 мс (2 секунди)
-    // await page.click('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
-    // Wait for navigation after clicking "Next"
-    await page.waitForNavigation({ timeout: 10000 });
+    try {
+      await page.waitForSelector(
+        'input[type="checkbox"][aria-labelledby="selectioni8"]'
+      );
+      await page.click('input[type="checkbox"][aria-labelledby="selectioni8"]');
+    } catch (error) {
+      console.error("Error occurred in block 8:", error);
+    }
 
-    // Check if login was successful
+    try {
+      await page.waitForSelector('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
+      await page.waitForTimeout(5000); // Затримка 5000 мс (5 секунд)
+      const navigationPromise = page.waitForNavigation(); // Set up a promise to wait for navigation
+      await page.click('div[jsname="uRHG6"] button[jsname="LgbsSe"]');
+      await navigationPromise; // Wait for navigation to finish
+    } catch (error) {
+      console.error("Error occurred continue button", error);
+    }
+
+    // Now currentUrl will be evaluated after navigation
     const currentUrl = await page.evaluate(() => window.location.href);
-
+    console.log(`ONE ${currentUrl}`);
     if (currentUrl.includes("login-error")) {
       console.log("Invalid email or password");
       throw new Error("Invalid email or password");
     }
+    console.log(`TWO ${currentUrl}`);
 
     // Get code from URL if present
     const regex = /code=([^&]+)/;
     const match = currentUrl.match(regex);
 
-    if (match && match[1]) {
-      const codeValue = match[1];
-      console.log(codeValue);
-      return codeValue;
-    } else {
-      console.log("Code not found in URL");
-    }
+    console.log(`THREE ${match}`);
+
+    const codeValue = match[1];
+    console.log(codeValue);
+    console.log(`FOUR ${codeValue}`);
+
+    return codeValue;
+
+    await page.waitForNavigation({ timeout: 60000 });
   } catch (error) {
     console.log("An error occurred:", error);
     throw error;

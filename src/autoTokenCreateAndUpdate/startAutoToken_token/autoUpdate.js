@@ -23,7 +23,7 @@ const processUsers = async () => {
   let users = [];
   const getUserData = () => {
     db.query(
-      `SELECT id, google_email FROM google_test WHERE saveToken = 1 ORDER BY historyUpdatedAt ASC`,
+      `SELECT id, google_email FROM google_users WHERE saveToken = "save" ORDER BY historyUpdatedAt ASC`,
       (err, result) => {
         if (err) {
           console.error("Error executing SQL query:", err);

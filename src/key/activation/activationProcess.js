@@ -1,14 +1,10 @@
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const clipboardy = require("clipboardy");
-const fs = require("fs");
 
 puppeteer.use(StealthPlugin());
+let isSuccess = false; // відстежує успішність виконання
 
-const email = "maxkozh06@gmail.com"; // Замініть своєю Google email адресою
-const password = "Max190716"; // Замініть своїм Google паролем
-
-async function downloadGoogleData(email, password) {
+async function activationProcess(email, password) {
   const browser = await puppeteer.launch({
     headless: false,
     executablePath:
@@ -50,19 +46,31 @@ async function downloadGoogleData(email, password) {
       if (nextButton) nextButton.click();
     });
 
-    await page.waitForSelector(
-      'div[class="cfc-product-header-content"] button[aria-label="enable this API"]'
-    );
-    await page.waitForTimeout(3000); // збільшити затримку перед натисканням кнопки
+    try {
+      await page.waitForSelector(
+        'div[class="cfc-product-header-content"] button[aria-label="enable this API"]'
+      );
+      await page.waitForTimeout(3000); // збільшити затримку перед натисканням кнопки
 
-    await page.click(
-      'div[class="cfc-product-header-content"] button[aria-label="enable this API"]'
-    );
-
-    await page.waitForNavigation({ timeout: 600000 });
+      await page.click(
+        'div[class="cfc-product-header-content"] button[aria-label="enable this API"]'
+      );
+      console.log("Успішно виконано");
+      isSuccess = true; // якщо успішно виконано, встановлюємо isSuccess в true
+    } catch (error) {
+      console.log("АПІ ВЖЕ АКТИВОВАНЕ");
+      isSuccess = true; // вважаємо, що якщо API уже активовано, це також успіх
+    }
   } catch (error) {
     console.log(error);
+    isSuccess = false; // якщо є помилка, встановлюємо isSuccess в false
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
+
+  return isSuccess; // повертаємо успішність виконання
 }
 
-downloadGoogleData(email, password);
+module.exports = activationProcess;
