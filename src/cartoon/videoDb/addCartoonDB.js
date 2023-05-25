@@ -60,11 +60,15 @@ async function processChannel(element) {
     }
   }
 
-  const insertQuery = `INSERT INTO cartoon (id, channelId, channeTitle) VALUES ? ON DUPLICATE KEY UPDATE id=id`;
+  const currentDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  const insertQuery = `INSERT INTO cartoon (id, channelId, channeTitle, dateRecorded) VALUES ? ON DUPLICATE KEY UPDATE id=id`;
+
   const insertValues = videoIds.map((videoId) => [
     videoId,
     channelId,
     channeTitle,
+    currentDate,
   ]);
 
   await executeQuery(insertQuery, [insertValues]);

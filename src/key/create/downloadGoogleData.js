@@ -2,13 +2,12 @@ const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const clipboardy = require("clipboardy");
 const fs = require("fs");
+const { db } = require("../../model/dbConnection");
 
 puppeteer.use(StealthPlugin());
-
-const email = "tiina.iskra@gmail.com"; // Замініть своєю Google email адресою
-const password = "olegivna"; // Замініть своїм Google паролем
-
 async function downloadGoogleData(email, password) {
+  let updateSuccessful = false;
+
   const browser = await puppeteer.launch({
     headless: false,
     executablePath:
@@ -31,15 +30,15 @@ async function downloadGoogleData(email, password) {
   try {
     await page.goto("https://console.cloud.google.com/apis/credentials");
 
-    await page.type("#identifierId", email);
+    await page.type("#identifierId", `${email}`);
 
     await page.click("#identifierNext");
-    await page.waitForNavigation({ timeout: 60000 });
+    await page.waitForNavigation({ timeout: 10000 });
 
     await page.waitForSelector('input[name="Passwd"].whsOnd.zHQkBf', {
       visible: true,
     });
-    await page.type('input[name="Passwd"].whsOnd.zHQkBf', password);
+    await page.type('input[name="Passwd"].whsOnd.zHQkBf', `${password}`);
 
     await page.evaluate(() => {
       const nextButton = Array.from(document.querySelectorAll("button")).find(
@@ -154,12 +153,17 @@ async function downloadGoogleData(email, password) {
     // Записуємо вміст буфера обміну в файл
     fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
 
+    // Оновлення успішно виконано
+    updateSuccessful = true;
+  } catch (err) {
+    console.error("Не вдалося завантажити дані з Google: ", err);
+  } finally {
+    // Закриваємо браузер незалежно від того, чи була помилка, чи ні
     await browser.close();
-
-    await page.waitForNavigation({ timeout: 600000 });
-  } catch (error) {
-    console.log(error);
   }
+
+  // Повертаємо значення, чи було оновлення успішним
+  return updateSuccessful;
 }
 
-downloadGoogleData(email, password);
+module.exports = downloadGoogleData;

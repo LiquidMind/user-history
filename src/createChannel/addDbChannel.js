@@ -2,7 +2,7 @@ const { db } = require("../model/dbConnection");
 const decryptChannel = require("./decryptChannel");
 
 function processNewUsers() {
-  const sqlQuery = `SELECT google_email, google_password, status_channel FROM google_test WHERE status_channel = 0`;
+  const sqlQuery = `SELECT google_email, google_password, status_channel FROM google_users WHERE status_channel = 0`;
 
   // Виконуємо запит до бази даних
   db.query(sqlQuery, (err, result) => {
@@ -27,7 +27,7 @@ function processNewUsers() {
       }, 5000);
 
       // Оновлюємо статус користувача в базі даних
-      const sqlQuery2 = `UPDATE google_test SET status_channel = 1 WHERE google_email = '${email}'`;
+      const sqlQuery2 = `UPDATE google_users SET status_channel = 1 WHERE google_email = '${email}'`;
 
       if (statusChannel === 0) {
         db.query(sqlQuery2, (err, result) => {
