@@ -1,4 +1,3 @@
-const { db } = require("../../model/dbConnection");
 const fs = require("fs");
 
 const addWordFoundUser = async (resID, idUser) => {

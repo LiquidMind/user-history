@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const AdmZip = require("adm-zip");
+const { arrHistory } = require("../arrHistory/arrHistory");
 
 function openZipFile(fileZipName) {
   const searchDir =
@@ -138,5 +139,6 @@ function openZipFile(fileZipName) {
   }
 }
 
-module.exports = openZipFile;
+openZipFile();
+// module.exports = openZipFile;
 // ============================

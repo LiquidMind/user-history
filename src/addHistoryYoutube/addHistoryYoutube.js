@@ -52,7 +52,7 @@ async function addHistoryYoutube(history, emailUser) {
         "INSERT INTO videos_all (id, title, titleUrl, timeDate) VALUE (?,?,?,?)";
       await connection.promise().execute(sql2, params);
 
-      console.log("УСПІШНО ДОБАВЛЕНО");
+      console.log("VIDEO USER ADD");
     } catch (err) {
       if (err.code === "ER_DUP_ENTRY") {
         console.log(`Duplicate entry error: ${err.message}`);

@@ -110,7 +110,7 @@ getVideoDetails(videoId, apiKey)
       console.log("Channel Title:", ownerChannelName);
       console.log("Category:", getCategoryName(videoCategoryId));
 
-      const sqlQuery = `INSERT INTO channel (channeTitle, channelId, category) VALUES (?, ?, ?)`;
+      const sqlQuery = `INSERT INTO channels (channeTitle, channelId, category) VALUES (?, ?, ?)`;
 
       db.query(
         sqlQuery,

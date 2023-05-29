@@ -11,11 +11,12 @@ const abbreviationText = (arrHistory) => {
     const input = resKey;
 
     // const regex = /[а-яА-Я]+/g; //Cyrillic
+    const regex = /[a-zA-Zа-яА-ЯїєіЇЄІ]+/g; //Cyrillic, Latin, and specific Ukrainian characters
 
-    const regex = /[a-zA-Zа-яА-Я]+/g; //Cyrillic and Latin
+    // const regex = /[a-zA-Zа-яА-Я]+/g; //Cyrillic and Latin
     const words = input
       .replace(
-        /\b(?:webvtt|captions|start|kind|position|align|ru|en|ua|language|c)\b/gi,
+        /\b(?:webvtt|captions|start|kind|position|align|ru|en|ua|language|c|nbsp)\b/gi,
         ""
       )
       .match(regex);
@@ -46,6 +47,7 @@ const abbreviationText = (arrHistory) => {
     fs.writeFile(
       `./src/subtitle/json_subtitle/${arrHistory}/next_${arrHistory}.json`,
       JSON.stringify(stems),
+      "utf8",
       (err) => {
         if (err) {
           console.error("Error:", err);

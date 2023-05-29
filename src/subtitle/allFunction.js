@@ -1,4 +1,12 @@
 const { db } = require("../model/dbConnection");
+const {
+  abbreviationText,
+  addSubtitle,
+  countWord,
+  textInJson,
+} = require("./index");
+const sortWord = require("./sort/sort");
+const addDB = require("./addInDB/addWordDB");
 
 lastId = null;
 
@@ -21,15 +29,6 @@ setInterval(() => {
     }
   });
 }, 5000);
-
-const {
-  abbreviationText,
-  addSubtitle,
-  countWord,
-  textInJson,
-} = require("./index");
-const sortWord = require("./sort/sort");
-const addDB = require("./addInDB/addWordDB");
 
 async function runFunctions(rowID) {
   try {

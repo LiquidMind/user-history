@@ -53,7 +53,9 @@ function historyId(arrViewes) {
       );
     }
 
-    fetch(`${URL}?id=${videoID}&part=statistics&part=contentDetails&key=${KEY}`)
+    fetch(
+      `${URL}?id=${videoID}&part=statistics&part=contentDetails&key=${KEY2}`
+    )
       .then((response) => {
         return response.json();
       })
