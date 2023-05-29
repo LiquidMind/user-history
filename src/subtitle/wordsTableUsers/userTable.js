@@ -1,5 +1,4 @@
 const { db } = require("../../model/dbConnection");
-
 const util = require("util");
 const addFolderWordsUser = require("./addFolderWordsUser");
 const addDbUserWord = require("./addDbUserWord");
@@ -8,14 +7,11 @@ const queryAsync = util.promisify(db.query).bind(db);
 async function main() {
   while (true) {
     const query =
-      "SELECT id, historyUpdatedAt FROM google_users ORDER BY historyUpdatedAt ASC";
-    // Запит до бази даних для отримання користувачів.
+      "SELECT id, historyUpdatedAt FROM google_test ORDER BY historyUpdatedAt ASC";
     const rows = await queryAsync(query);
     const sortedRows = rows.sort(
       (a, b) => new Date(a.historyUpdatedAt) - new Date(b.historyUpdatedAt)
     );
-
-    // Видаліть другий цикл while тут.
 
     for (const row of sortedRows) {
       const { historyUpdatedAt: date, id } = row;
@@ -37,11 +33,10 @@ async function main() {
       }
 
       await openID(id);
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // 5000 ms = 5 секунд
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
-    // Додайте затримку перед наступною ітерацією зовнішнього циклу.
-    await new Promise((resolve) => setTimeout(resolve, 10000)); // 10000 ms = 10 секунд
+    await new Promise((resolve) => setTimeout(resolve, 10000));
   }
 }
 
@@ -53,7 +48,15 @@ async function executeFunctions(userID, statusSub) {
 }
 
 async function openID(userID) {
-  const sqlQuery = `SELECT videos_user_${userID}.id, videos_all.statusSub, videos_user_${userID}.status FROM videos_user_${userID} JOIN videos_all ON videos_user_${userID}.id = videos_all.id WHERE videos_all.statusSub IN ("subtitleSaved", "noSubtitle", "proces")`;
+  let tableName = `videos_user_${userID}`;
+  const checkTableQuery = `SHOW TABLES LIKE '${tableName}'`;
+  const tableExists = await queryAsync(checkTableQuery);
+
+  if (tableExists.length === 0) {
+    tableName = "cartoons";
+  }
+
+  const sqlQuery = `SELECT ${tableName}.id, videos_all.statusSub, ${tableName}.status FROM ${tableName} JOIN videos_all ON ${tableName}.id = videos_all.id WHERE videos_all.statusSub IN ("subtitleSaved", "noSubtitle", "proces")`;
 
   db.query(sqlQuery, async (err, result) => {
     if (err) {
@@ -84,7 +87,7 @@ async function openID(userID) {
         }
 
         if (newStatus) {
-          const sqlQuery3 = `UPDATE videos_user_${userID} SET status = "${newStatus}" WHERE id = "${resultId}"`;
+          const sqlQuery3 = `UPDATE ${tableName} SET status = "${newStatus}" WHERE id = "${resultId}"`;
           await queryAsync(sqlQuery3);
           console.log(`Video ${resultId} status updated to ${newStatus}`);
         }
@@ -92,5 +95,5 @@ async function openID(userID) {
     }
   });
 }
-//////////////
+
 main().catch((err) => console.error(err));

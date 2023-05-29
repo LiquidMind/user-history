@@ -6,7 +6,7 @@ let previousFileZipName = null;
 let timeoutId = null;
 let intervalId = null;
 
-function renameZipFile(fileZipName) {
+function renameAndMoveZipFile(fileZipName) {
   if (previousFileZipName !== fileZipName) {
     if (timeoutId) clearTimeout(timeoutId);
     if (intervalId) clearInterval(intervalId);
@@ -22,6 +22,8 @@ async function processFolder(fileZipName) {
 
     const folderPath =
       "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP/";
+    const destinationFolder =
+      "/Users/andrijkozevnikov/Documents/ProjectYoutube/historysZIP/";
 
     const nameNewFile = `${fileZipName}.zip`;
 
@@ -38,11 +40,21 @@ async function processFolder(fileZipName) {
       )[0];
 
       if (lastFile) {
-        fs.rename(lastFile, path.join(folderPath, nameNewFile), (err) => {
+        const newPath = path.join(folderPath, nameNewFile);
+        fs.rename(lastFile, newPath, (err) => {
           if (err) {
             console.log("Помилка перейменування файлу: " + err);
           } else {
             console.log("Файл успішно перейменовано.");
+            // moving the renamed file to a new location
+            const finalPath = path.join(destinationFolder, nameNewFile);
+            fs.rename(newPath, finalPath, (err) => {
+              if (err) {
+                console.log("Помилка переміщення файлу: " + err);
+              } else {
+                console.log("Файл успішно переміщено.");
+              }
+            });
           }
         });
       } else {
@@ -74,4 +86,4 @@ async function processFolder(fileZipName) {
   }
 }
 
-module.exports = renameZipFile;
+module.exports = renameAndMoveZipFile;

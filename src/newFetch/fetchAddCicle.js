@@ -1,7 +1,6 @@
+const fs = require("fs");
+const path = require("path");
 const langdetect = require("langdetect");
-
-// const arrHistory = require("../array/arrHistory");
-// const arrViewes = require("../array/arrViewes");
 const { db } = require("../model/dbConnection");
 require("dotenv").config();
 const { KEY, KEY2 } = process.env;
@@ -57,7 +56,6 @@ function historyId(arrViewes) {
       const durationString = lengOne;
       const regex = /(\d+)D|(\d+)H|(\d+)M|(\d+)S/g;
       let match;
-      // let durationInSeconds = 0;
 
       while ((match = regex.exec(durationString))) {
         if (match[1]) {
@@ -71,7 +69,6 @@ function historyId(arrViewes) {
         }
       }
 
-      // console.log(durationInSeconds);
       vieweVideo = info?.statistics.viewCount;
 
       likeVideo = info?.statistics.likeCount;
@@ -95,8 +92,22 @@ function historyId(arrViewes) {
         console.log("c");
       }
       console.log(langDetected);
+
+      // Add this new code
+      const videoId = info?.id;
+      const filename = path.join(
+        "/Users/andrijkozevnikov/Documents/ProjectYoutube/Archive/description",
+        `${videoId}.txt`
+      );
+
+      fs.writeFile(filename, description, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(`Опис збережено до ${filename}`);
+        }
+      });
     }
-    // update the database with the video information
     const sqlQuery =
       "UPDATE videos_all SET   viewes=?, oklike=?, lengthVideo=?, language=?  WHERE  id=?";
     db.query(
@@ -113,5 +124,3 @@ function historyId(arrViewes) {
     );
   }
 }
-
-// // historyId(arrHistory);

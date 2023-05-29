@@ -7,7 +7,7 @@ let previousParam = null;
 let timeoutId = null;
 let intervalId = null;
 
-function historyArray(newParam) {
+function arrHistory(newParam) {
   console.log(`ПАРАМЕТР ОЧІКУВАННЯ: ${newParam}`);
 
   if (previousParam !== newParam) {
@@ -90,4 +90,4 @@ async function processFolder(param) {
   }
 }
 
-module.exports = { historyArray };
+module.exports = { arrHistory };

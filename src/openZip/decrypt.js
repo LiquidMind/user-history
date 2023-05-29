@@ -20,7 +20,7 @@ function decrypt(email, encryptedText) {
   let decrypted = decipher.update(encryptedTextOnly, "hex", "utf8"); // розшифрування шифротексту
   decrypted += decipher.final("utf8"); // додавання розшифрованого тексту до результату
   renameZipFile(email);
-  openZipFile(email);
+  // openZipFile(email);
   historyArray(email);
   return downloadGoogleData(email, decrypted); // Повертаємо розшифрований текст
 }

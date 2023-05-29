@@ -62,7 +62,7 @@ async function processChannel(element) {
 
   const currentDate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-  const insertQuery = `INSERT INTO cartoon (id, channelId, channeTitle, dateRecorded) VALUES ? ON DUPLICATE KEY UPDATE id=id`;
+  const insertQuery = `INSERT INTO cartoons (id, channelId, channeTitle, dateRecorded) VALUES ? ON DUPLICATE KEY UPDATE id=id`;
 
   const insertValues = videoIds.map((videoId) => [
     videoId,
@@ -73,7 +73,7 @@ async function processChannel(element) {
 
   await executeQuery(insertQuery, [insertValues]);
 
-  const updateQuery = `UPDATE channel SET numberOfVideos = ? WHERE channelId = ?`;
+  const updateQuery = `UPDATE channels SET numberOfVideos = ? WHERE channelId = ?`;
   await executeQuery(updateQuery, [videoIds.length, channelId]);
 
   console.log(videoIds);
@@ -82,7 +82,7 @@ async function processChannel(element) {
 
 async function main() {
   while (true) {
-    const sqlQuery = `SELECT channeTitle , channelId FROM channel WHERE numberOfVideos = 0`;
+    const sqlQuery = `SELECT channeTitle , channelId FROM channels WHERE numberOfVideos = 0`;
     const channels = await asyncQuery(sqlQuery);
 
     for (let element of channels) {
