@@ -8,7 +8,7 @@ let match = email.match(/^([^@]*)/);
 const nameFile = match[0];
 console.log(nameFile);
 
-const sqlQuery = `INSERT INTO google_test (google_email, google_password, status_channel,saveToken,statusKEY) VALUE (?,?,?,?,?)`;
+const sqlQuery = `INSERT INTO google_users (google_email, google_password, status_channel,saveToken,statusKEY) VALUE (?,?,?,?,?)`;
 db.query(sqlQuery, [email, password, 1, "save", "activated"], (err, result) => {
   if (err) {
     console.log(err);

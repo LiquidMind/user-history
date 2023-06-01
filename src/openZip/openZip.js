@@ -3,18 +3,37 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const { arrHistory } = require("../arrHistory/arrHistory");
 
-function openZipFile(fileZipName) {
+function openZipFile() {
+  function findOldestFile(directory) {
+    const files = fs.readdirSync(directory);
+    let oldestFile = { name: "", time: Infinity };
+
+    for (const file of files) {
+      const filePath = path.join(directory, file);
+
+      if (fs.statSync(filePath).isFile() && !file.startsWith(".DS_")) {
+        const fileTime = fs.statSync(filePath).birthtime.getTime();
+
+        if (fileTime < oldestFile.time) {
+          oldestFile.name = file;
+          oldestFile.time = fileTime;
+        }
+      }
+    }
+
+    return oldestFile.name;
+  }
+
   const searchDir =
-    "/Users/andrijkozevnikov/Documents/ProjectYoutube/downloadZIP";
+    "/Users/andrijkozevnikov/Documents/ProjectYoutube/historysZIP";
   const projectPath =
     "/Users/andrijkozevnikov/Documents/ProjectYoutube/user-history/src/openZip/historyUsers";
-  const zipFileName = `${fileZipName}.zip`;
-  const newFolderName = `${fileZipName}`;
   const moveToDir =
     "/Users/andrijkozevnikov/Documents/ProjectYoutube/Archive/zipFile_users";
   const waitInterval = 5000;
-
-  // Функція для отримання поточної дати у форматі рядка "YYYY-MM-DD"
+  const fileZipName = findOldestFile(searchDir).slice(0, -4); // видаляємо розширення ".zip"
+  const zipFileName = `${fileZipName}.zip`;
+  const newFolderName = `${fileZipName}`;
 
   function getCurrentDateString() {
     const date = new Date();
@@ -29,7 +48,6 @@ function openZipFile(fileZipName) {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   }
 
-  // Функція для пошуку zip-файлу в заданій директорії
   function findZipFile(directory, zipName) {
     const files = fs.readdirSync(directory);
 
@@ -49,13 +67,11 @@ function openZipFile(fileZipName) {
     return null;
   }
 
-  // Функція для розпакування zip-файлу
   function unzipFile(zipPath, destination) {
     const zip = new AdmZip(zipPath);
     zip.extractAllTo(destination, true);
   }
 
-  // Функція для перейменування розпакованої папки
   function renameExtractedFolder(destination, newFolderName) {
     const files = fs.readdirSync(destination);
     const extractedFolder = files.find((file) =>
@@ -72,13 +88,15 @@ function openZipFile(fileZipName) {
       console.log("No folder found to rename.");
     }
   }
-
-  // Функція для виконання дій, коли з'явиться zip-файл
   function executeWhenZipFileAppears() {
     const zipPath = findZipFile(searchDir, zipFileName);
 
     if (zipPath) {
       console.log(`Found zip file at: ${zipPath}`);
+
+      // Передаємо назву папки в функцію arrHistory перед розпакуванням
+      arrHistory(newFolderName);
+
       unzipFile(zipPath, projectPath);
       renameExtractedFolder(projectPath, newFolderName);
       moveZipFile(zipPath, moveToDir);
@@ -92,8 +110,6 @@ function openZipFile(fileZipName) {
     }
   }
 
-  // Функція для переміщення zip-файлу в нову папку
-  // Зміна функції moveZipFile для включення дати в назві збереженого файлу
   function moveZipFile(zipPath, destination) {
     createFolderIfNotExist(destination, newFolderName);
     const currentDate = getCurrentDateString();
@@ -106,7 +122,6 @@ function openZipFile(fileZipName) {
     console.log(`Zip file moved to: ${destinationPath}`);
   }
 
-  // Функція для створення папки, якщо вона не існує
   function createFolderIfNotExist(destination, folderName) {
     const folderPath = path.join(destination, folderName);
     if (!fs.existsSync(folderPath)) {
@@ -115,7 +130,6 @@ function openZipFile(fileZipName) {
     }
   }
 
-  // Функція для моніторингу директорії на появу zip-файлу
   function monitorDirectory(directory, zipName) {
     console.log(
       `Monitoring directory '${directory}' for the appearance of '${zipName}'.`
@@ -133,12 +147,12 @@ function openZipFile(fileZipName) {
     );
   }
 
-  // Виконати функцію executeWhenZipFileAppears, якщо zip-файл знайдено
   if (!executeWhenZipFileAppears()) {
     monitorDirectory(searchDir, zipFileName);
   }
 }
 
-openZipFile();
+setInterval(openZipFile, 60 * 1000); // переводимо хвилини в мілісекунди
+
 // module.exports = openZipFile;
 // ============================

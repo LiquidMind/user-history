@@ -2,12 +2,13 @@ const { db } = require("../../model/dbConnection");
 const util = require("util");
 const addFolderWordsUser = require("./addFolderWordsUser");
 const addDbUserWord = require("./addDbUserWord");
+
 const queryAsync = util.promisify(db.query).bind(db);
 
 async function main() {
   while (true) {
     const query =
-      "SELECT id, historyUpdatedAt FROM google_test ORDER BY historyUpdatedAt ASC";
+      "SELECT id, historyUpdatedAt FROM google_users ORDER BY historyUpdatedAt ASC";
     const rows = await queryAsync(query);
     const sortedRows = rows.sort(
       (a, b) => new Date(a.historyUpdatedAt) - new Date(b.historyUpdatedAt)
@@ -18,11 +19,11 @@ async function main() {
       console.log(`Date: ${date}, ID: ${id}`);
 
       const sqlQuery = `CREATE TABLE IF NOT EXISTS words_user_${id} (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      words VARCHAR(255) NOT NULL UNIQUE,
-      number INT NOT NULL,
-      numberOfVideo INT NOT NULL
-    )`;
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        words VARCHAR(255) NOT NULL UNIQUE,
+        number INT NOT NULL,
+        numberOfVideo INT NOT NULL
+      )`;
 
       try {
         await queryAsync(sqlQuery);
@@ -48,52 +49,43 @@ async function executeFunctions(userID, statusSub) {
 }
 
 async function openID(userID) {
-  let tableName = `videos_user_${userID}`;
-  const checkTableQuery = `SHOW TABLES LIKE '${tableName}'`;
-  const tableExists = await queryAsync(checkTableQuery);
+  const sqlQuery = `SELECT videos_user_${userID}.id, videos_all.statusSub, videos_user_${userID}.status FROM videos_user_${userID} JOIN videos_all ON videos_user_${userID}.id = videos_all.id WHERE videos_all.statusSub IN ("subtitleSaved", "noSubtitle", "proces")`;
 
-  if (tableExists.length === 0) {
-    tableName = "cartoons";
-  }
+  try {
+    const result = await queryAsync(sqlQuery);
 
-  const sqlQuery = `SELECT ${tableName}.id, videos_all.statusSub, ${tableName}.status FROM ${tableName} JOIN videos_all ON ${tableName}.id = videos_all.id WHERE videos_all.statusSub IN ("subtitleSaved", "noSubtitle", "proces")`;
+    for (const resObj of result) {
+      const resultId = resObj.id;
+      const statusSub = resObj.statusSub;
+      const userStatus = resObj.status;
+      let newStatus;
 
-  db.query(sqlQuery, async (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      for (const resObj of result) {
-        const resultId = resObj.id;
-        const statusSub = resObj.statusSub;
-        const userStatus = resObj.status;
-        let newStatus;
+      if (userStatus === "saveWords") {
+        continue;
+      }
 
-        if (userStatus === "saveWords") {
-          continue;
-        }
-
-        try {
-          if (statusSub === "subtitleSaved") {
-            await executeFunctions(userID, resultId);
-
-            newStatus = "saveWords";
-          } else if (statusSub === "noSubtitle") {
-            newStatus = "noSubtitles";
-          } else if (statusSub === "proces") {
-            newStatus = "noWords";
-          }
-        } catch (error) {
+      try {
+        if (statusSub === "subtitleSaved") {
+          await executeFunctions(userID, resultId);
+          newStatus = "saveWords";
+        } else if (statusSub === "noSubtitle") {
+          newStatus = "noSubtitles";
+        } else if (statusSub === "proces") {
           newStatus = "noWords";
         }
+      } catch (error) {
+        newStatus = "noWords";
+      }
 
-        if (newStatus) {
-          const sqlQuery3 = `UPDATE ${tableName} SET status = "${newStatus}" WHERE id = "${resultId}"`;
-          await queryAsync(sqlQuery3);
-          console.log(`Video ${resultId} status updated to ${newStatus}`);
-        }
+      if (newStatus) {
+        const updateSqlQuery = `UPDATE videos_user_${userID} SET status = "${newStatus}" WHERE id = "${resultId}"`;
+        await queryAsync(updateSqlQuery);
+        console.log(`Video ${resultId} status updated to ${newStatus}`);
       }
     }
-  });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 main().catch((err) => console.error(err));

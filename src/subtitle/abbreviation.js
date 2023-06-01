@@ -1,7 +1,5 @@
 const natural = require("natural");
-
 const fs = require("fs");
-// const arrHistory = require("./arrHistory/arrTest");
 
 const abbreviationText = (arrHistory) => {
   return new Promise((resolve, reject) => {
@@ -10,20 +8,15 @@ const abbreviationText = (arrHistory) => {
 
     const input = resKey;
 
-    // const regex = /[а-яА-Я]+/g; //Cyrillic
-    const regex = /[a-zA-Zа-яА-ЯїєіЇЄІ]+/g; //Cyrillic, Latin, and specific Ukrainian characters
+    //Updated RegExp to match Ukrainian letters
+    const regex = /[a-zA-Zа-яА-ЯїєіЇЄІ]+/g;
 
-    // const regex = /[a-zA-Zа-яА-Я]+/g; //Cyrillic and Latin
     const words = input
       .replace(
         /\b(?:webvtt|captions|start|kind|position|align|ru|en|ua|language|c|nbsp)\b/gi,
         ""
       )
       .match(regex);
-
-    // console.log(filteredText);
-
-    // const words = input.match(regex);
 
     fs.writeFile(
       `./src/subtitle/json_subtitle/${arrHistory}/wholeWords_${arrHistory}.json`,
@@ -42,7 +35,6 @@ const abbreviationText = (arrHistory) => {
     const stemmer = natural.PorterStemmerRu;
 
     const stems = words.map((word) => stemmer.stem(word));
-    // console.log(stems); // Output: ['AeBo4K', ' ABO4K', 'ABO4K', AeBO4K
 
     fs.writeFile(
       `./src/subtitle/json_subtitle/${arrHistory}/next_${arrHistory}.json`,

@@ -1,7 +1,7 @@
 const { db } = require("../model/dbConnection");
 const moment = require("moment");
 const decrypt = require("../openZip/decrypt");
-const addHistoryAllDb = require("../cartoon/virtualUsrrCartoon/addHistoryAllDb");
+const addHistoryAllDb = require("../cartoon/virtualUsrCartoon/addHistoryAllDb");
 
 // New function
 // async function addHistoryAllDb() {
@@ -16,7 +16,7 @@ const addHistoryAllDb = require("../cartoon/virtualUsrrCartoon/addHistoryAllDb")
 // }
 
 async function fetchAndUpdate() {
-  const sqlQuery = `SELECT id, google_email, google_password, historyUpdatedAt FROM google_test ORDER BY historyUpdatedAt ASC LIMIT 1`;
+  const sqlQuery = `SELECT id, google_email, google_password, historyUpdatedAt FROM google_users ORDER BY historyUpdatedAt ASC LIMIT 1`;
 
   db.query(sqlQuery, async (err, result) => {
     if (err) {
@@ -42,7 +42,7 @@ async function fetchAndUpdate() {
         decrypt(row.google_email, row.google_password.trim());
       }
 
-      const updateQuery = `UPDATE google_test SET historyUpdatedAt = NOW() WHERE google_email = "${row.google_email}"`;
+      const updateQuery = `UPDATE google_users SET historyUpdatedAt = NOW() WHERE google_email = "${row.google_email}"`;
 
       db.query(updateQuery, (err, result) => {
         if (err) {

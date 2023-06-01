@@ -5,7 +5,7 @@ const fs = require("fs");
 
 // Функція для запиту до бази даних і оновлення файлу JSON
 function performQueryAndUpdateFile() {
-  let nameDB = "cartoons";
+  let nameDB = "videos_user_7";
 
   const sqlQuery = `SELECT id, channeTitle, channelId, dateRecorded FROM ${nameDB} WHERE addJSON=0`;
   db.query(sqlQuery, (err, result) => {
@@ -36,7 +36,7 @@ function performQueryAndUpdateFile() {
       console.log(objectVideo);
 
       // Оновлення значення addJSON
-      const updateQuery = `UPDATE cartoons SET addJSON=1 WHERE id="${id}"`;
+      const updateQuery = `UPDATE videos_user_7 SET addJSON=1 WHERE id="${id}"`;
       db.query(updateQuery, (err) => {
         if (err) {
           console.log("Помилка при оновленні значення addJSON:", err);
