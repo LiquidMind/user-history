@@ -36,7 +36,7 @@
 
 const axios = require("axios");
 const { db } = require("../../model/dbConnection");
-const videoId = "ZBOKToEkeTs";
+const videoId = "tRM_NYG6hyM";
 const apiKey = "AIzaSyDs6h228Zj__2j37GWw1Lwx8YgCUFr6M2o";
 
 const getVideoDetails = async (videoId, apiKey) => {
