@@ -5,8 +5,8 @@ const {
   countWord,
   textInJson,
 } = require("./index");
-const sortWord = require("./sort/sort");
-const addDB = require("./addInDB/addWordDB");
+// const sortWord = require("./sort/sort");
+// const addDB = require("./addInDB/addWordDB");
 
 lastId = null;
 
