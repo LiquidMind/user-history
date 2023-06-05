@@ -32,7 +32,7 @@ async function fetchAndUpdate() {
         const nameChannel = row.google_email;
         const id = row.id;
         try {
-          await addHistoryAllDb(nameChannel);
+          await addHistoryAllDb(nameChannel, id);
           console.log("addHistoryAllDb function has finished its work");
         } catch (error) {
           console.error("An error occurred in addHistoryAllDb:", error);

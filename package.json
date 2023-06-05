@@ -58,6 +58,7 @@
     "robotjs": "^0.6.0",
     "server-destroy": "^1.0.1",
     "subtitle-converter": "^3.0.12",
+    "transliteration": "^2.3.5",
     "youtube-dl-exec": "^2.3.1",
     "ytdl-core": "^4.11.4"
   }
