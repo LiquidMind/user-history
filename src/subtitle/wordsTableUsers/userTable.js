@@ -1,7 +1,7 @@
 const { db } = require("../../model/dbConnection");
 const util = require("util");
 const addFolderWordsUser = require("./addFolderWordsUser");
-// const addDbUserWord = require("./addDbUserWord");
+const addDbUserWord = require("./addDbUserWord");
 
 const queryAsync = util.promisify(db.query).bind(db);
 
@@ -42,6 +42,7 @@ async function main() {
 }
 
 async function executeFunctions(userID, statusSub) {
+  console.log(`USER: ${userID}, VIDEO: ${statusSub}`);
   await Promise.all([
     addDbUserWord(statusSub, userID),
     addFolderWordsUser(statusSub, userID),
@@ -68,6 +69,7 @@ async function openID(userID) {
         if (statusSub === "subtitleSaved") {
           await executeFunctions(userID, resultId);
           newStatus = "saveWords";
+          console.log("SAVE WORD");
         } else if (statusSub === "noSubtitle") {
           newStatus = "noSubtitles";
         } else if (statusSub === "proces") {
@@ -80,7 +82,7 @@ async function openID(userID) {
       if (newStatus) {
         const updateSqlQuery = `UPDATE videos_user_${userID} SET status = "${newStatus}" WHERE id = "${resultId}"`;
         await queryAsync(updateSqlQuery);
-        console.log(`Video ${resultId} status updated to ${newStatus}`);
+        // console.log(`Video ${resultId} status updated to ${newStatus}`);
       }
     }
   } catch (error) {

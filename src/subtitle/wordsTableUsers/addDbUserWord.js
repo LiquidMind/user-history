@@ -83,8 +83,9 @@
 //////////////////////////////////////////////////////
 
 const fs = require("fs");
+const { db } = require("../../model/dbConnection");
 const csv = require("csv-parser");
-const addDbWithJson = require("path-to-addDbWithJson"); // Вкажіть шлях до модуля addDbWithJson тут
+const addDbWithJson = require("./addDbWithJson"); // Вкажіть шлях до модуля addDbWithJson тут
 
 function addDbUserWord(objWord, userID) {
   return new Promise((resolve, reject) => {
