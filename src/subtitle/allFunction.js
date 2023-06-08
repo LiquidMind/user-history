@@ -74,25 +74,6 @@ async function runFunctions(rowID) {
   } catch (error) {
     console.error("Error in countWord:", error);
   }
-
-  // try {
-  //   await sortWord(rowID);
-  //   console.log("Function 5");
-  // } catch (error) {
-  //   console.error("Error in sortWord:", error);
-  // }
-
-  // try {
-  //   await addDB(rowID);
-  //   console.log("ADD DB");
-  //   const mysqlQuery = `UPDATE videos_all SET statusSub = 'subtitleSaved' WHERE id = "${rowID}"`;
-  //   db.query(mysqlQuery, (err, result) => {
-  //     if (err) throw err;
-  //     console.log("Number of rows affected:", result.affectedRows);
-  //   });
-  // } catch (error) {
-  //   console.error("Error in addDB:", error);
-  // }
 }
 
 //test function

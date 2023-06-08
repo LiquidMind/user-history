@@ -1,7 +1,7 @@
 const { db } = require("../../model/dbConnection");
 const util = require("util");
 const addFolderWordsUser = require("./addFolderWordsUser");
-const addDbUserWord = require("./addDbUserWord");
+// const addDbUserWord = require("./addDbUserWord");
 
 const queryAsync = util.promisify(db.query).bind(db);
 
