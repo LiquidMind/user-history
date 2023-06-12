@@ -1,7 +1,7 @@
 const fs = require("fs");
 const natural = require("natural");
 const langdetect = require("langdetect");
-const { db } = require("../model/dbConnection");
+const { db } = require("../../model/dbConnection");
 
 // const arrHistory = require("./arrHistory/arrTest");
 
