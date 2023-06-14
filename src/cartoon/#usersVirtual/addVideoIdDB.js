@@ -1,10 +1,18 @@
 const { db } = require("../../model/dbConnection");
 const fs = require("fs");
 
-// const latinHashtag = "multfilm";
-
-function insertDataFromFile(latinHashtag) {
+function insertDataFromFile(latinHashtag, publishedBefore, publishedAfter) {
   const filePath = `/Users/andrijkozevnikov/Documents/ProjectYoutube/videoIdHashtag/${latinHashtag}/uniqueVideoIds.json`;
+
+  // Convert to MySQL compatible datetime format
+  const mysqlPublishedAfter = new Date(publishedAfter)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+  const mysqlPublishedBefore = new Date(publishedBefore)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   console.log(latinHashtag);
   console.log(filePath);
@@ -21,27 +29,30 @@ function insertDataFromFile(latinHashtag) {
 
       for (let i = 0; i < dataArray.length; i++) {
         const videoId = dataArray[i];
-        let insertQuery = `INSERT INTO tag_${latinHashtag} (video_id) VALUES (?)`;
+        let insertQuery = `INSERT INTO tag_${latinHashtag} (video_id,publishedBefore, publishedAfter,  timeDate) VALUES (?, ?, ?, NOW())`;
 
-        db.query(insertQuery, [videoId], (error, results) => {
-          pendingQueries--;
+        db.query(
+          insertQuery,
+          [videoId, mysqlPublishedBefore, mysqlPublishedAfter],
+          (error, results) => {
+            pendingQueries--;
 
-          if (error && error.code === "ER_DUP_ENTRY") {
-            console.error(`Duplicate entry ignored for video_id: ${videoId}`);
-          } else if (error) {
-            console.error(error);
-          } else {
-            console.log("Дані успішно записані в таблицю.");
+            if (error && error.code === "ER_DUP_ENTRY") {
+              console.error(`Duplicate entry ignored for video_id: ${videoId}`);
+            } else if (error) {
+              console.error(error);
+            } else {
+              console.log("Дані успішно записані в таблицю.");
+            }
+
+            if (pendingQueries === 0) {
+              resolve();
+            }
           }
-
-          if (pendingQueries === 0) {
-            resolve();
-          }
-        });
+        );
       }
     });
   });
 }
 
-// insertDataFromFile(latinHashtag);
 module.exports = insertDataFromFile;

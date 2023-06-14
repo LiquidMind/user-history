@@ -5,10 +5,22 @@ const ytdl = require("ytdl-core");
 
 const arrTag = require("./arrTag.json");
 
-// Helper function to turn callback-based db.query into promise-based function
 function query(sql, params) {
   return new Promise((resolve, reject) => {
     db.query(sql, params, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
+
+async function updateAddJson(latinHashtag, id) {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = `UPDATE tag_${latinHashtag} SET addJson = 1 WHERE video_id = ?`;
+    db.query(sqlQuery, [id], (err, results) => {
       if (err) {
         reject(err);
       } else {
@@ -48,8 +60,11 @@ async function createJson(arrTag) {
           appendToJson(latinHashtag, videoData);
           console.log(videoData);
 
-          const updateSqlQuery = `UPDATE tag_${latinHashtag} SET addJson = 1 WHERE video_id = ?`;
-          await query(updateSqlQuery, [id]);
+          try {
+            await updateAddJson(latinHashtag, id);
+          } catch (error) {
+            console.error(`Помилка при оновленні addJson: ${error}`);
+          }
         }
       }
     } catch (error) {
@@ -115,7 +130,7 @@ function sleep(ms) {
 }
 
 async function getVideoDataFromAPI(id) {
-  await sleep(1000); // додаємо паузу 1 секунду перед виконанням запиту до API
+  await sleep(1000);
   const videoInfo = await ytdl.getInfo(id);
 
   const videoData = {

@@ -3,7 +3,7 @@ const path = require("path");
 const langdetect = require("langdetect");
 const { db } = require("../model/dbConnection");
 require("dotenv").config();
-const { KEY, KEY2 } = process.env;
+const { KEY, KEY2, KEY33 } = process.env;
 const URL = "https://www.googleapis.com/youtube/v3/videos";
 
 let lastId = null;
@@ -29,7 +29,7 @@ setInterval(() => {
 
 function historyId(arrViewes) {
   fetch(
-    `${URL}?part=snippet&part=statistics&part=contentDetails&id=${arrViewes}&key=${KEY}`
+    `${URL}?part=snippet&part=statistics&part=contentDetails&id=${arrViewes}&key=${KEY33}`
   )
     .then((response) => {
       return response.json();
