@@ -27,28 +27,34 @@ function getRandomDatesOrNull(start) {
   let publishedAfter = null;
   let publishedBefore = null;
 
+  // Генеруємо випадкову дату для publishedAfter, якщо не null
   if (Math.random() < 0.5) {
     publishedAfter = new Date(
       start.getTime() + Math.random() * (end.getTime() - start.getTime())
     );
   }
 
+  // Генеруємо випадкову дату для publishedBefore, якщо не null
   if (Math.random() < 0.5) {
     publishedBefore = new Date(
       start.getTime() + Math.random() * (end.getTime() - start.getTime())
     );
   }
 
+  // Якщо обидві дати випадкові, переконуємося, що publishedAfter < publishedBefore
   if (publishedAfter && publishedBefore && publishedAfter > publishedBefore) {
     [publishedAfter, publishedBefore] = [publishedBefore, publishedAfter];
   }
-  console.log(`publishedAfter : ${publishedAfter}`);
-  console.log(`publishedBefore: ${publishedBefore}`);
 
   return [publishedAfter, publishedBefore];
 }
 
-async function getChannelInfoByHashtags(hashtag, iteration, dates) {
+// Використання:
+const dates = getRandomDatesOrNull(new Date("2005-04-23"));
+console.log(`publishedAfter: ${dates[0] ? dates[0].toISOString() : null}`);
+console.log(`publishedBefore: ${dates[1] ? dates[1].toISOString() : null}`);
+
+async function getChannelInfoByHashtags(hashtag, iteration) {
   let newVideoIds = [];
 
   const sortBy = "relevance";
@@ -94,6 +100,7 @@ async function getChannelInfoByHashtags(hashtag, iteration, dates) {
 
   while (true) {
     try {
+      //   const dates = getRandomDatesOrNull(new Date("2005-04-23"));
       let queryParameters = {
         part: "snippet",
         maxResults: 50,
@@ -103,6 +110,7 @@ async function getChannelInfoByHashtags(hashtag, iteration, dates) {
         order: sortBy,
       };
 
+      // If dates[0] or dates[1] are not null, add them to the query parameters
       if (dates[0]) {
         queryParameters.publishedAfter = dates[0].toISOString();
       }
@@ -150,6 +158,7 @@ async function getChannelInfoByHashtags(hashtag, iteration, dates) {
 
   fs.writeFileSync(jsonFileName, JSON.stringify(uniqueVideoIds, null, 2));
 
+  // await insertDataFromFile(latinHashtag);
   await insertDataFromFile(
     latinHashtag,
     dates[0] ? dates[0].toISOString() : null,
@@ -181,6 +190,12 @@ async function main() {
         `Розпочинається ітерація ${iteration} для хештегу ${hashtag}`
       );
       const dates = getRandomDatesOrNull(new Date("2005-04-23"));
+      console.log(
+        `publishedAfter: ${dates[0] ? dates[0].toISOString() : null}`
+      );
+      console.log(
+        `publishedBefore: ${dates[1] ? dates[1].toISOString() : null}`
+      );
       try {
         await getChannelInfoByHashtags(hashtag, iteration, dates);
         await new Promise((resolve) => setTimeout(resolve, 10000)); // delay for 10 seconds
