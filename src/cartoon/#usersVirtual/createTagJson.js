@@ -36,21 +36,23 @@ async function createJson(arrTag) {
     const latinHashtag = transliteration.slugify(tag, { lowercase: true });
 
     console.log(latinHashtag);
-    const sqlQuery = `SELECT video_id FROM tag_${latinHashtag} WHERE addJson = 0`;
+    const sqlQuery = `SELECT video_id, timeDate FROM tag_${latinHashtag} WHERE addJson = 0`;
 
     try {
       const results = await query(sqlQuery);
 
       for (const resObj of results) {
         const id = resObj.video_id;
+        const timeDate = resObj.timeDate;
+
         const videoExists = await checkVideoExists(id);
 
         let videoData;
         if (videoExists) {
-          videoData = await getVideoDataFromTable(id);
+          videoData = await getVideoDataFromTable(id, timeDate);
         } else {
           try {
-            videoData = await getVideoDataFromAPI(id);
+            videoData = await getVideoDataFromAPI(id, timeDate);
           } catch (error) {
             console.error(`Помилка при отриманні даних відео з API: ${error}`);
           }
@@ -111,7 +113,7 @@ async function checkVideoExists(id) {
   return results[0].count > 0;
 }
 
-async function getVideoDataFromTable(id) {
+async function getVideoDataFromTable(id, timeDate) {
   const sqlQuery = `SELECT * FROM videos_all WHERE id = ?`;
   const results = await query(sqlQuery, [id]);
 
@@ -119,7 +121,7 @@ async function getVideoDataFromTable(id) {
     id: results[0].id,
     title: results[0].title,
     titleUrl: `https://www.youtube.com/watch?v=${results[0].id}`,
-    timeDate: results[0].timeDate,
+    timeDate,
   };
 
   return videoData;
@@ -129,7 +131,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function getVideoDataFromAPI(id) {
+async function getVideoDataFromAPI(id, timeDate) {
   await sleep(1000);
   const videoInfo = await ytdl.getInfo(id);
 
@@ -137,7 +139,7 @@ async function getVideoDataFromAPI(id) {
     id: id,
     title: videoInfo.videoDetails.title,
     titleUrl: `https://www.youtube.com/watch?v=${id}`,
-    timeDate: videoInfo.videoDetails.uploadDate,
+    timeDate,
     channelId: videoInfo.videoDetails.channelId,
     channeTitle: videoInfo.videoDetails.author.name,
   };

@@ -4,15 +4,13 @@ const fs = require("fs");
 function insertDataFromFile(latinHashtag, publishedBefore, publishedAfter) {
   const filePath = `/Users/andrijkozevnikov/Documents/ProjectYoutube/videoIdHashtag/${latinHashtag}/uniqueVideoIds.json`;
 
-  // Convert to MySQL compatible datetime format
-  const mysqlPublishedAfter = new Date(publishedAfter)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  const mysqlPublishedBefore = new Date(publishedBefore)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+  // Convert to MySQL compatible datetime format or 'NULL' if values are null
+  const mysqlPublishedAfter = publishedAfter
+    ? new Date(publishedAfter).toISOString().slice(0, 19).replace("T", " ")
+    : "null";
+  const mysqlPublishedBefore = publishedBefore
+    ? new Date(publishedBefore).toISOString().slice(0, 19).replace("T", " ")
+    : "null";
 
   console.log(latinHashtag);
   console.log(filePath);
@@ -29,7 +27,7 @@ function insertDataFromFile(latinHashtag, publishedBefore, publishedAfter) {
 
       for (let i = 0; i < dataArray.length; i++) {
         const videoId = dataArray[i];
-        let insertQuery = `INSERT INTO tag_${latinHashtag} (video_id,publishedBefore, publishedAfter,  timeDate) VALUES (?, ?, ?, NOW())`;
+        let insertQuery = `INSERT INTO tag_${latinHashtag} (video_id, publishedBefore, publishedAfter, timeDate) VALUES (?, ?, ?, NOW())`;
 
         db.query(
           insertQuery,
