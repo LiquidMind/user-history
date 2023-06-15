@@ -77,12 +77,14 @@ async function updateVideoData(videoId) {
               // Оновлення таблиці video_all
               db.query(
                 `
-                UPDATE videos_all
-                SET
-                  views_per_second = ?,
-                  likes_per_second = ?
-                WHERE id = ?`,
-                [viewsPerSecond, likesPerSecond, videoId],
+    UPDATE videos_all
+    SET
+      viewes = ?,
+      okLike = ?,
+      views_per_second = ?,
+      likes_per_second = ?
+    WHERE id = ?`,
+                [newViews, newLikes, viewsPerSecond, likesPerSecond, videoId],
                 function (error, results, fields) {
                   if (error) throw error;
                   console.log("Updated video_all successfully!");
