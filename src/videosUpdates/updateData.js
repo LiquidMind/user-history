@@ -5,104 +5,124 @@ const mysql = require("mysql");
 async function updateVideoData(videoId) {
   try {
     const youtubeResponse = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=AIzaSyBkUQj9uoanlVgZWB8_LPgsxrBUIoSgV-Y`
+      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=AIzaSyC-VSZ7Kysug_C5oGMEurX1Yw2PSHRz5DI`
     );
-    let newViews = youtubeResponse.data.items[0].statistics.viewCount;
-    let newLikes = youtubeResponse.data.items[0].statistics.likeCount;
 
-    // Замінюємо NaN на null
-    if (isNaN(newViews)) newViews = null;
-    if (isNaN(newLikes)) newLikes = null;
+    if (youtubeResponse.data.items && youtubeResponse.data.items.length > 0) {
+      let newViews = youtubeResponse.data.items[0].statistics.viewCount;
+      let newLikes = youtubeResponse.data.items[0].statistics.likeCount;
 
-    db.query(
-      `SELECT * FROM videos_updates WHERE video_id = ? AND updates = 0 ORDER BY views_per_second IS NULL DESC, prev_views DESC`,
-      [videoId],
-      function (error, results, fields) {
-        if (error) throw error;
-        if (results.length > 0) {
-          const prevDatetime = results[0].curr_datetime;
-          const prevViews = results[0].curr_views;
-          const prevLikes = results[0].curr_likes;
+      // Замінюємо NaN на null
+      if (isNaN(newViews)) newViews = null;
+      if (isNaN(newLikes)) newLikes = null;
 
-          const diffViews = newViews - prevViews;
-          const diffLikes = newLikes - prevLikes;
+      db.query(
+        `SELECT * FROM videos_updates WHERE video_id = ? AND updates = 0 ORDER BY views_per_second IS NULL DESC, curr_views DESC`,
+        [videoId],
+        function (error, results, fields) {
+          if (error) throw error;
+          if (results.length > 0) {
+            const prevDatetime = results[0].curr_datetime;
+            const prevViews = results[0].curr_views;
+            const prevLikes = results[0].curr_likes;
 
-          const currDatetime = new Date();
-          const diffSeconds = (currDatetime - new Date(prevDatetime)) / 1000;
+            const diffViews = newViews - prevViews;
+            const diffLikes = newLikes - prevLikes;
 
-          const viewsPerSecond =
-            diffViews !== 0
-              ? Number((diffViews / diffSeconds).toFixed(3))
-              : null;
-          const likesPerSecond =
-            diffLikes !== 0
-              ? Number((diffLikes / diffSeconds).toFixed(3))
-              : null;
+            const currDatetime = new Date();
+            const diffSeconds = (currDatetime - new Date(prevDatetime)) / 1000;
 
-          db.query(
-            `
-            UPDATE videos_updates
-            SET 
-              prev_datetime = ?,
-              prev_views = ?,
-              prev_likes = ?,
-              curr_datetime = ?,
-              curr_views = ?,
-              curr_likes = ?,
-              diff_seconds = ?,
-              diff_views = ?,
-              diff_likes = ?,
-              views_per_second = ?,
-              likes_per_second = ?,
-              updates = 1
-            WHERE video_id = ? AND updates = 0`,
-            [
-              prevDatetime,
-              prevViews,
-              prevLikes,
-              mysql.raw("NOW()"),
-              newViews,
-              newLikes,
-              diffSeconds,
-              diffViews,
-              diffLikes,
-              viewsPerSecond,
-              likesPerSecond,
-              videoId,
-            ],
-            function (error, results, fields) {
-              if (error) throw error;
-              console.log("Updated successfully!");
+            const viewsPerSecond =
+              diffViews !== 0
+                ? Number((diffViews / diffSeconds).toFixed(6))
+                : null;
+            const likesPerSecond =
+              diffLikes !== 0
+                ? Number((diffLikes / diffSeconds).toFixed(6))
+                : null;
 
-              // Оновлення таблиці video_all
-              db.query(
-                `
-    UPDATE videos_all
-    SET
-      viewes = ?,
-      okLike = ?,
-      views_per_second = ?,
-      likes_per_second = ?
-    WHERE id = ?`,
-                [newViews, newLikes, viewsPerSecond, likesPerSecond, videoId],
-                function (error, results, fields) {
-                  if (error) throw error;
-                  console.log("Updated video_all successfully!");
-                  processNextVideo();
-                }
-              );
-            }
-          );
-        } else {
-          console.log("No updates required.");
-          processNextVideo();
+            db.query(
+              `
+              UPDATE videos_updates
+              SET 
+                prev_datetime = ?,
+                prev_views = ?,
+                prev_likes = ?,
+                curr_datetime = ?,
+                curr_views = ?,
+                curr_likes = ?,
+                diff_seconds = ?,
+                diff_views = ?,
+                diff_likes = ?,
+                views_per_second = ?,
+                likes_per_second = ?,
+                updates = 1
+              WHERE video_id = ? AND updates = 0`,
+              [
+                prevDatetime,
+                prevViews,
+                prevLikes,
+                mysql.raw("NOW()"),
+                newViews,
+                newLikes,
+                diffSeconds,
+                diffViews,
+                diffLikes,
+                viewsPerSecond,
+                likesPerSecond,
+                videoId,
+              ],
+              function (error, results, fields) {
+                if (error) throw error;
+                console.log(`Updated ${videoId} successfully!`);
+
+                // Оновлення таблиці video_all
+                db.query(
+                  `
+                  UPDATE videos_all
+                  SET
+                    viewes = ?,
+                    okLike = ?,
+                    views_per_second = ?,
+                    likes_per_second = ?
+                  WHERE id = ?`,
+                  [newViews, newLikes, viewsPerSecond, likesPerSecond, videoId],
+                  function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(`Updated video_all ${videoId}  successfully!`);
+                    processNextVideo();
+                  }
+                );
+              }
+            );
+          } else {
+            console.log("No updates required.");
+            processNextVideo();
+          }
         }
-      }
-    );
+      );
+    } else {
+      console.error("No data returned from YouTube API for videoId:", videoId);
+      markVideoAsUpdated(videoId);
+    }
   } catch (error) {
     console.error(`Error: ${error}`);
     processNextVideo();
   }
+}
+
+function markVideoAsUpdated(videoId) {
+  db.query(
+    `UPDATE videos_updates SET updates = 1 WHERE video_id = ?`,
+    [videoId],
+    function (error, results, fields) {
+      if (error) throw error;
+      console.log(
+        `Video with id ${videoId} marked as updated because it is unavailable.`
+      );
+      processNextVideo(); // перейти до наступного відео
+    }
+  );
 }
 
 let videoIds = [];
@@ -120,7 +140,7 @@ function processNextVideo() {
 
 function waitForNewVideos() {
   db.query(
-    `SELECT video_id FROM videos_updates WHERE updates = 0 ORDER BY views_per_second IS NULL DESC, prev_views DESC`,
+    `SELECT video_id FROM videos_updates WHERE updates = 0 ORDER BY views_per_second IS NULL DESC, curr_views DESC`,
     function (error, results, fields) {
       if (error) throw error;
       if (results.length > 0) {
