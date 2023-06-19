@@ -18,7 +18,7 @@ const addVideosInTableUpdates = () => {
 
       db.query(
         sqlQuery,
-        [id, timeDate, viewes, okLike, timeDate, viewes, okLike, 0],
+        [id, null, null, null, timeDate, viewes, okLike, 0], // Змінили значення на null для prev_datetime, prev_views, prev_likes
         (err) => {
           if (err) {
             console.log(err);
