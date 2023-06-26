@@ -8,6 +8,7 @@ const db = mysql.createPool({
   user: "root",
   database: DATABASE,
   password: PASSWORD,
+  charset: "utf8mb4",
 });
 
 exports.db = db;

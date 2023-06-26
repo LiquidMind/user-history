@@ -8,10 +8,11 @@ const URL = "https://www.googleapis.com/youtube/v3/videos";
 
 let lastId = null;
 
-setInterval(() => {
+function startInterval() {
   const mysqlQuery = "SELECT id FROM videos_all WHERE lengthVideo = 'false'";
 
-  db.query(mysqlQuery, function (err, results) {
+  db.query(mysqlQuery, async function (err, results) {
+    // Додаємо async тут
     if (err) {
       console.error(err);
       return;
@@ -20,14 +21,20 @@ setInterval(() => {
       const rowID = Object.values(results[0]);
       if (rowID !== lastId) {
         console.log(rowID);
-        historyId(rowID);
+        await checkVideos(rowID); // Тепер ми можемо використовувати await тут
+        await historyId(rowID); // Також очікуємо кінця виконання historyId
         lastId = rowID;
       }
     }
+    // Call this function again after 1 second
+    setTimeout(startInterval, 1000);
   });
-}, 1000);
+}
 
-function historyId(arrViewes) {
+// Call this function initially to start the loop
+startInterval();
+
+async function historyId(arrViewes) {
   fetch(
     `${URL}?part=snippet&part=statistics&part=contentDetails&id=${arrViewes}&key=${KEY33}`
   )
