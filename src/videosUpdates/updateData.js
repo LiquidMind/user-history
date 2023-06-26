@@ -5,7 +5,7 @@ const mysql = require("mysql");
 async function updateVideoData(videoId) {
   try {
     const youtubeResponse = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=AIzaSyC-VSZ7Kysug_C5oGMEurX1Yw2PSHRz5DI`
+      `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=AIzaSyBkUQj9uoanlVgZWB8_LPgsxrBUIoSgV-Y`
     );
 
     if (youtubeResponse.data.items && youtubeResponse.data.items.length > 0) {
