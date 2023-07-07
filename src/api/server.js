@@ -13,12 +13,33 @@ app.use(express.json());
 
 //всі відео по рейтингу views_per_second
 
-app.get("/api/all", (req, res) => {
+app.get("/api/views_per_second", (req, res) => {
   const page = req.query.page || 1; // За замовчуванням використовується сторінка 1
   const pageSize = 10; // Кількість відео на сторінку
   const offset = (page - 1) * pageSize;
 
   const sqlQuery = `SELECT * FROM videos_all ORDER BY views_per_second DESC LIMIT ${offset}, ${pageSize}`;
+  db.query(sqlQuery, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        result: result,
+      });
+    }
+  });
+});
+
+// всі відео дял дітей та по рейтингу популярності за перідо
+
+app.get("/api/made_for_kids", (req, res) => {
+  const page = req.query.page || 1; // За замовчуванням використовується сторінка 1
+  const pageSize = 10; // Кількість відео на сторінку
+  const offset = (page - 1) * pageSize;
+
+  const sqlQuery = `SELECT * FROM videos_all WHERE made_for_kids=1 ORDER BY views_per_second DESC LIMIT ${offset}, ${pageSize}`;
   db.query(sqlQuery, (err, result) => {
     if (err) {
       console.log(err);
@@ -53,6 +74,48 @@ app.get("/api/all/ageRating", (req, res) => {
   });
 });
 
+// Всі відео по  переглядах
+
+app.get("/api/viewes", (req, res) => {
+  const page = req.query.page || 1; // За замовчуванням використовується сторінка 1
+  const pageSize = 10; // Кількість відео на сторінку
+  const offset = (page - 1) * pageSize;
+
+  const sqlQuery = `SELECT * FROM videos_all ORDER BY viewes DESC LIMIT ${offset}, ${pageSize}`;
+  db.query(sqlQuery, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        result: result,
+      });
+    }
+  });
+});
+
+// Блоки для порівняння
+app.get("/api/all/choice", (req, res) => {
+  const sqlQuery = `SELECT * FROM videos_all ORDER BY RAND() LIMIT 2`;
+  db.query(sqlQuery, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Failed to get video IDs",
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        result,
+      });
+    }
+  });
+});
+
 app.get("/api/video/:videoId", async (req, res) => {
   const videoId = req.params.videoId;
 
@@ -68,145 +131,79 @@ app.get("/api/video/:videoId", async (req, res) => {
   }
 });
 
-// app.get("/api/allInfoUser", (req, res) => {
-//   const name = decodeURIComponent(req.query.name);
-//   console.log(name);
-//   const page = parseInt(req.query.page) || 1;
-//   const limit = 10;
-//   const offset = (page - 1) * limit;
+// СОРТ ПО ДЛЯ ДОРОСЛІШИХ ДІТЕЙ АБО ДОРОСЛИХ
+// app.post("/api/sorting", (req, res) => {
+//   const { videoId1, videoId2 } = req.body;
+//   const comparison = ">"; // Значення за замовчуванням або значення залежно від логіки
 
-//   const sqlQuery = `SELECT uh.id, uh.statusSub, uh.statusWord, uh.language, uh.title, uh.titleUrl, uh.viewes, uh.lengthVideo, uh.okLike FROM ${name} AS ${name} JOIN videos_all AS uh ON ${name}.id = uh.id LIMIT ? OFFSET ?;`;
-
-//   db.query(sqlQuery, [limit, offset], (err, result) => {
+//   const sqlQuery = `INSERT INTO sorting (sorting_type, user_id, video_id_1, video_id_2, comparison) VALUES ('age', 1, ?, ?, ?)`;
+//   db.query(sqlQuery, [videoId1, videoId2, comparison], (err, result) => {
 //     if (err) {
 //       console.log(err);
+//       res.status(500).json({
+//         status: "error",
+//         code: 500,
+//         message: "Failed to save video IDs",
+//       });
 //     } else {
 //       res.status(200).json({
 //         status: "success",
 //         code: 200,
-//         result: result,
+//         message: "Video IDs saved successfully",
 //       });
 //     }
 //   });
 // });
 
-// app.post("/register", async (req, res) => {
-//   const nick_name = req.body.nick_name;
-//   const email = req.body.email;
-//   const password = req.body.password;
+app.post("/api/sorting", (req, res) => {
+  const { videoId1, videoId2, sortingType } = req.body; // Get the sorting type from the request
+  const comparison = ">";
 
-//   const hashedPassword = await bcrypt.hash(password, 10); // хешуємо пароль з сіллю (10 разів)
+  const sqlQuery = `INSERT INTO sorting (sorting_type, user_id, video_id_1, video_id_2, comparison) VALUES (?, 1, ?, ?, ?)`;
+  db.query(
+    sqlQuery,
+    [sortingType, videoId1, videoId2, comparison],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "Failed to save video IDs",
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          code: 200,
+          message: "Video IDs saved successfully",
+        });
+      }
+    }
+  );
+});
 
-//   const sqlQuery =
-//     "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
-//   db.query(sqlQuery, [nick_name, email, hashedPassword], (err, result) => {
-//     if (err) {
-//       console.log(err);
-//       return res
-//         .status(500)
-//         .send("Сталася помилка при реєстрації користувача!");
-//     }
-//     res.status(200).send("Користувач успішно зареєстрований!");
-//   });
-// });
+app.patch("/api/sorting/:videoId1/:videoId2", (req, res) => {
+  const { videoId1, videoId2 } = req.params;
+  const { comparison } = req.body;
 
-// app.post("/login", async (req, res) => {
-//   const email = req.body.email;
-//   const password = req.body.password;
-
-//   console.log(email, password);
-
-//   const sqlQuery = "SELECT * FROM users WHERE email = ? ";
-//   db.query(sqlQuery, [email], async (err, result) => {
-//     if (err) {
-//       console.log(err);
-//       return res.status(500).send("Сталася помилка при вході користувача!");
-//     }
-
-//     if (result.length === 0) {
-//       return res
-//         .status(404)
-//         .send("Користувача з такою електронною адресою не знайдено!");
-//     }
-
-//     const user = result[0];
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     console.log(isPasswordValid);
-
-//     if (!isPasswordValid) {
-//       return res.status(401).send("Неправильний пароль!");
-//     }
-//     console.log(result);
-//     res.status(200).send("Вхід успішний!");
-//   });
-// });
-
-// app.get("/tiktok", async (req, res) => {
-//   const videoUrl = req.query.url;
-
-//   try {
-//     const videoMeta = await TikTokScraper.getVideoMeta(videoUrl);
-//     const videoPath = videoMeta.collector[0].videoUrl;
-//     const fileName = path.basename(videoPath);
-//     res.download(videoPath, fileName);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Unable to download video.");
-//   }
-// });
-
-// app.get("/download", async (req, res, next) => {
-//   try {
-//     const url = req.query.url;
-
-//     console.log(url);
-//     if (!url || !ytdl.validateURL(url)) {
-//       return res.status(400).send("Invalid YouTube URL");
-//     }
-
-//     const info = await ytdl.getInfo(url);
-//     console.log(JSON.stringify(info, null, 2));
-//     const formats = info.formats;
-//     const highestQualityFormat = ytdl.chooseFormat(formats, {
-//       quality: "highest",
-//     });
-//     const videoReadableStream = ytdl(url, {
-//       format: highestQualityFormat,
-//     });
-//     res.setHeader(
-//       "Content-Disposition",
-//       `attachment; filename="${info.title}.mp4"`
-//     );
-//     videoReadableStream.pipe(res);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// app.use((error, req, res, next) => {
-//   console.error(error);
-//   res.status(500).send("Internal server error");
-// });
-
-// app.get("/api/:id", (req, res) => {
-//   const videoLink = req.params.id;
-//   console.log(videoLink);
-
-//   const sql = `SELECT  viewes, lengthVideo, okLike
-// FROM max190716
-// JOIN user_history_youtube
-// ON max190716.id = user_history_youtube.id
-// WHERE user_history_youtube.id =  '${videoLink}';`;
-
-//   db.query(sql, (err, result) => {
-//     if (err) {
-//       console.error("Error executing SQL query: " + err.stack);
-//       res.status(500).send("Error executing SQL query");
-//     }
-
-//     res.json(result);
-//   });
-// });
+  const sqlQuery = `UPDATE sorting SET comparison = ? WHERE user_id = 1 AND video_id_1 = ? AND video_id_2 = ?`;
+  db.query(sqlQuery, [comparison, videoId1, videoId2], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Failed to update comparison",
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "Comparison updated successfully",
+      });
+    }
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Conecting port: ${PORT}`);
