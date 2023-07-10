@@ -17,7 +17,7 @@ const SCOPES = [
 const TOKEN_DIR =
   (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) +
   "/Documents/ProjectYoutube/Archive/usersTokens/";
-let TOKEN_PATH = ""; // Объявление переменной TOKEN_PATH
+let TOKEN_PATH = "";
 
 const processUsers = async () => {
   let users = [];
