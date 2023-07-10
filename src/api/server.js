@@ -86,6 +86,55 @@ app.get("/api/viewes", (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      console.log(result);
+
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        result: result,
+      });
+    }
+  });
+});
+
+// ================================== PLEYLISTS API =======================================
+
+app.get("/api/playlist_content", (req, res) => {
+  const title = req.query.title; // Назва плейлиста вводиться користувачем
+  console.log(title);
+
+  if (!title) {
+    return res.status(400).json({
+      status: "error",
+      code: 400,
+      message: "Title parameter is required",
+    });
+  }
+
+  const sqlQuery = `SELECT 
+  playlists.playlist_id, 
+  playlists_content.video_id, 
+  videos_all.* 
+FROM 
+  playlists 
+INNER JOIN 
+  playlists_content ON playlists.playlist_id = playlists_content.playlist_id 
+INNER JOIN 
+  videos_all ON playlists_content.video_id = videos_all.id 
+WHERE 
+  playlists.title = 'Top 3 Most Viewed Daily Videos';
+`;
+
+  db.query(sqlQuery, [title], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Internal server error",
+      });
+    } else {
+      console.log(result);
       res.status(200).json({
         status: "success",
         code: 200,
